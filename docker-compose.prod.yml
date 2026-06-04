@@ -1,0 +1,9 @@
+services:
+  web:
+    image: ${WEB_IMAGE}
+    environment:
+      NODE_ENV: production
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

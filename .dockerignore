@@ -1,0 +1,15 @@
+.git
+.gitignore
+.github
+.next
+.vercel
+.wrangler
+node_modules
+out
+README.md
+*.md
+*.pem
+.env*
+.DS_Store
+docker-compose*.yml
+Dockerfile*

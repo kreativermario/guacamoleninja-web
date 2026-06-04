@@ -1,10 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  turbopack: {
-    root: __dirname,
-  },
+  output: "standalone",
 };
 
 export default nextConfig;
