@@ -18,7 +18,7 @@ export default async function DashboardPage() {
     prisma.guild.findMany({ where: { leftAt: null }, select: { id: true } }),
   ]);
 
-  const botGuildIds = new Set(botGuilds.map((g) => g.id));
+  const botGuildIds = new Set(botGuilds.map(({ id }) => id));
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
