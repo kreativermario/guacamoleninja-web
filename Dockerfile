@@ -14,6 +14,13 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm prisma generate
 RUN pnpm build
 
+FROM base AS migrator
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+CMD ["pnpm", "prisma", "migrate", "deploy"]
+
 FROM gcr.io/distroless/nodejs24-debian12:nonroot AS runner
 WORKDIR /app
 ENV NODE_ENV=production
