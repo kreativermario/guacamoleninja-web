@@ -94,7 +94,8 @@ jobs:
             ${{ env.VAULT_PATH }} PORTAINER_URL | PORTAINER_URL ;
             ${{ env.VAULT_PATH }} PORTAINER_ENDPOINT_ID | PORTAINER_ENDPOINT_ID ;
             ${{ env.VAULT_PATH }} HARBOR_REGISTRY_URL | HARBOR_REGISTRY_URL ;
-            ${{ env.VAULT_PATH }} DISCORD_CLIENT_ID | DISCORD_CLIENT_ID
+            ${{ env.VAULT_PATH }} DISCORD_CLIENT_ID | DISCORD_CLIENT_ID ;
+            ${{ env.VAULT_PATH }} HOST_PORT | HOST_PORT
 
       - name: Resolve image ref
         id: image
@@ -146,7 +147,8 @@ jobs:
             {
               "env": [
                 {"name": "WEB_IMAGE", "value": "${{ steps.image.outputs.ref }}"},
-                {"name": "DISCORD_CLIENT_ID", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_ID }}"}
+                {"name": "DISCORD_CLIENT_ID", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_ID }}"},
+                {"name": "HOST_PORT", "value": "${{ steps.vault.outputs.HOST_PORT }}"}
               ],
               "stackFileContent": ${{ env.COMPOSE_CONTENT }},
               "prune": true,
@@ -166,7 +168,8 @@ jobs:
             {
               "env": [
                 {"name": "WEB_IMAGE", "value": "${{ steps.image.outputs.ref }}"},
-                {"name": "DISCORD_CLIENT_ID", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_ID }}"}
+                {"name": "DISCORD_CLIENT_ID", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_ID }}"},
+                {"name": "HOST_PORT", "value": "${{ steps.vault.outputs.HOST_PORT }}"}
               ],
               "name": "${{ env.STACK_NAME }}",
               "fromAppTemplate": false,
