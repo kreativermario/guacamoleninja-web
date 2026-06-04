@@ -1,6 +1,6 @@
 {
   "name": "guacamoleninja-web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "packageManager": "pnpm@11.5.1",
   "scripts": {
@@ -10,7 +10,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^2.11.2",
+    "@auth/prisma-adapter": "^2.0.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "next": "16.2.7",
@@ -26,7 +26,7 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3",
-    "eslint": "^9.39.4",
+    "eslint": "^10.4.1",
     "eslint-config-next": "16.2.7",
     "prisma": "^7.8.0",
     "tailwindcss": "^4.3.0",
