@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { signOut } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? "";
 const INVITE_BASE = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&permissions=66448710&scope=bot+applications.commands`;
@@ -41,10 +42,12 @@ export default async function DashboardPage() {
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           {session.user.image && (
-            <img
+            <Image
               src={session.user.image}
               alt={session.user.name ?? ""}
-              style={{ width: 28, height: 28, borderRadius: "50%", border: "1.5px solid var(--border)" }}
+              width={28}
+              height={28}
+              style={{ borderRadius: "50%", border: "1.5px solid var(--border)" }}
             />
           )}
           <span style={{ fontSize: "0.85rem", color: "var(--muted)" }}>{session.user.name}</span>
@@ -88,7 +91,7 @@ export default async function DashboardPage() {
                   display: "flex", alignItems: "center", gap: "1rem",
                 }}>
                   {icon ? (
-                    <img src={icon} alt="" style={{ width: 44, height: 44, borderRadius: "50%", flexShrink: 0 }} />
+                    <Image src={icon} alt="" width={44} height={44} style={{ borderRadius: "50%", flexShrink: 0 }} />
                   ) : (
                     <div style={{
                       width: 44, height: 44, borderRadius: "50%", flexShrink: 0,

@@ -3,6 +3,7 @@ import { getUserGuilds, guildIconUrl } from "@/lib/discord";
 import { prisma } from "@/lib/prisma";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { updateGuildConfig } from "./actions";
 
 export default async function GuildPage({
@@ -40,7 +41,7 @@ export default async function GuildPage({
           ← Servers
         </Link>
         <span style={{ color: "var(--border)" }}>/</span>
-        {icon && <img src={icon} alt="" style={{ width: 22, height: 22, borderRadius: "50%" }} />}
+        {icon && <Image src={icon} alt="" width={22} height={22} style={{ borderRadius: "50%" }} />}
         <span style={{ fontWeight: 600, fontSize: "0.9rem" }}>{guild.name}</span>
       </nav>
 
