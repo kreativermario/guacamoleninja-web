@@ -1,4 +1,13 @@
 services:
+  migrate:
+    image: ${MIGRATOR_IMAGE}
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
   web:
     image: ${WEB_IMAGE}
     environment:
@@ -11,6 +20,8 @@ services:
     ports:
       - "${HOST_PORT}:3000"
     depends_on:
+      migrate:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
     restart: unless-stopped

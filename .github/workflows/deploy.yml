@@ -19,6 +19,7 @@ jobs:
     environment: production
     outputs:
       tag: ${{ steps.meta.outputs.tag }}
+      migrator_image: ${{ steps.meta.outputs.migrator_image }}
 
     steps:
       - uses: actions/checkout@v6.0.3
@@ -52,6 +53,7 @@ jobs:
           TAG=$(git rev-parse --short HEAD)
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "image=$REGISTRY/guacamoleninja/guacamoleninja-web:$TAG" >> "$GITHUB_OUTPUT"
+          echo "migrator_image=$REGISTRY/guacamoleninja/guacamoleninja-web-migrator:$TAG" >> "$GITHUB_OUTPUT"
           echo "registry=$REGISTRY" >> "$GITHUB_OUTPUT"
 
       - name: Log in to Harbor
@@ -70,6 +72,16 @@ jobs:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.image }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push migrator
+        uses: docker/build-push-action@v7.2.0
+        with:
+          context: .
+          push: true
+          target: migrator
+          tags: ${{ steps.meta.outputs.migrator_image }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -103,7 +115,7 @@ jobs:
             ${{ env.VAULT_PATH }} POSTGRES_DB | POSTGRES_DB ;
             ${{ env.VAULT_PATH }} HOST_PORT | HOST_PORT
 
-      - name: Resolve image ref
+      - name: Resolve image refs
         id: image
         env:
           HARBOR_REGISTRY_URL: ${{ steps.vault.outputs.HARBOR_REGISTRY_URL }}
@@ -112,7 +124,9 @@ jobs:
           REGISTRY="${REGISTRY#http://}"
           REGISTRY="${REGISTRY#https://}"
           REGISTRY="${REGISTRY%/}"
-          echo "ref=$REGISTRY/guacamoleninja/guacamoleninja-web:${{ needs.build-and-push.outputs.tag }}" >> "$GITHUB_OUTPUT"
+          TAG="${{ needs.build-and-push.outputs.tag }}"
+          echo "ref=$REGISTRY/guacamoleninja/guacamoleninja-web:$TAG" >> "$GITHUB_OUTPUT"
+          echo "migrator_ref=$REGISTRY/guacamoleninja/guacamoleninja-web-migrator:$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Read docker-compose file content safely
         id: read_compose
@@ -153,6 +167,7 @@ jobs:
             {
               "env": [
                 {"name": "WEB_IMAGE", "value": "${{ steps.image.outputs.ref }}"},
+                {"name": "MIGRATOR_IMAGE", "value": "${{ steps.image.outputs.migrator_ref }}"},
                 {"name": "DISCORD_CLIENT_ID", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_ID }}"},
                 {"name": "DISCORD_CLIENT_SECRET", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_SECRET }}"},
                 {"name": "AUTH_SECRET", "value": "${{ steps.vault.outputs.AUTH_SECRET }}"},
@@ -180,6 +195,7 @@ jobs:
             {
               "env": [
                 {"name": "WEB_IMAGE", "value": "${{ steps.image.outputs.ref }}"},
+                {"name": "MIGRATOR_IMAGE", "value": "${{ steps.image.outputs.migrator_ref }}"},
                 {"name": "DISCORD_CLIENT_ID", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_ID }}"},
                 {"name": "DISCORD_CLIENT_SECRET", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_SECRET }}"},
                 {"name": "AUTH_SECRET", "value": "${{ steps.vault.outputs.AUTH_SECRET }}"},
