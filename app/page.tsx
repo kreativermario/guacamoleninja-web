@@ -2,6 +2,8 @@ const CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? "";
 const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&permissions=66448710&scope=bot+applications.commands`;
 
 const DOCS_URL = "https://docs.guacamoleninja.com";
+const DASHBOARD_URL = "https://app.guacamoleninja.com";
+const GITHUB_URL = "https://github.com/kreativermario/guacamoleninja-bot";
 
 const FEATURES = [
   {
@@ -62,6 +64,10 @@ export default function Home() {
           <a href={DOCS_URL} target="_blank" rel="noopener noreferrer"
             style={{ color: "var(--muted)", textDecoration: "none" }}>
             docs
+          </a>
+          <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer"
+            style={{ color: "var(--muted)", textDecoration: "none" }}>
+            dashboard
           </a>
           <a href={INVITE_URL} target="_blank" rel="noopener noreferrer"
             style={{
@@ -182,7 +188,8 @@ export default function Home() {
         <div style={{ display: "flex", gap: "1.25rem" }}>
           <a href={INVITE_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)", textDecoration: "none" }}>Invite</a>
           <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)", textDecoration: "none" }}>Docs</a>
-          <a href="https://github.com/guacamoleninja/guacamoleninja-bot" target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)", textDecoration: "none" }}>GitHub</a>
+          <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)", textDecoration: "none" }}>Dashboard</a>
+          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)", textDecoration: "none" }}>GitHub</a>
         </div>
       </footer>
     </div>
