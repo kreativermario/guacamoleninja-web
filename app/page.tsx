@@ -93,7 +93,7 @@ export default function Home() {
           <p style={{ fontSize: "1.125rem", color: "var(--muted)", maxWidth: "480px", lineHeight: 1.6 }}>
             A utility Discord bot for small communities. Weather, polls, reminders, and server tools — all in one place.
           </p>
-          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center" }}>
+          <div className="hero-actions" style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center" }}>
             <a href={INVITE_URL} target="_blank" rel="noopener noreferrer"
               style={{
                 background: "var(--primary-dark)", color: "#fff",
@@ -102,13 +102,21 @@ export default function Home() {
               }}>
               Add to Discord
             </a>
+            <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer"
+              style={{
+                background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text)",
+                padding: "0.75rem 1.5rem", borderRadius: "8px",
+                textDecoration: "none", fontWeight: 600, fontSize: "1rem",
+              }}>
+              Dashboard
+            </a>
             <a href={DOCS_URL} target="_blank" rel="noopener noreferrer"
               style={{
                 border: "1px solid var(--border)", color: "var(--text)",
                 padding: "0.75rem 1.5rem", borderRadius: "8px",
                 textDecoration: "none", fontWeight: 600, fontSize: "1rem",
               }}>
-              View Docs →
+              Docs →
             </a>
           </div>
         </section>

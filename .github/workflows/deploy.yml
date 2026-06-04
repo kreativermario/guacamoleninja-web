@@ -95,6 +95,12 @@ jobs:
             ${{ env.VAULT_PATH }} PORTAINER_ENDPOINT_ID | PORTAINER_ENDPOINT_ID ;
             ${{ env.VAULT_PATH }} HARBOR_REGISTRY_URL | HARBOR_REGISTRY_URL ;
             ${{ env.VAULT_PATH }} DISCORD_CLIENT_ID | DISCORD_CLIENT_ID ;
+            ${{ env.VAULT_PATH }} DISCORD_CLIENT_SECRET | DISCORD_CLIENT_SECRET ;
+            ${{ env.VAULT_PATH }} AUTH_SECRET | AUTH_SECRET ;
+            ${{ env.VAULT_PATH }} AUTH_URL | AUTH_URL ;
+            ${{ env.VAULT_PATH }} POSTGRES_USER | POSTGRES_USER ;
+            ${{ env.VAULT_PATH }} POSTGRES_PASSWORD | POSTGRES_PASSWORD ;
+            ${{ env.VAULT_PATH }} POSTGRES_DB | POSTGRES_DB ;
             ${{ env.VAULT_PATH }} HOST_PORT | HOST_PORT
 
       - name: Resolve image ref
@@ -148,6 +154,12 @@ jobs:
               "env": [
                 {"name": "WEB_IMAGE", "value": "${{ steps.image.outputs.ref }}"},
                 {"name": "DISCORD_CLIENT_ID", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_ID }}"},
+                {"name": "DISCORD_CLIENT_SECRET", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_SECRET }}"},
+                {"name": "AUTH_SECRET", "value": "${{ steps.vault.outputs.AUTH_SECRET }}"},
+                {"name": "AUTH_URL", "value": "${{ steps.vault.outputs.AUTH_URL }}"},
+                {"name": "POSTGRES_USER", "value": "${{ steps.vault.outputs.POSTGRES_USER }}"},
+                {"name": "POSTGRES_PASSWORD", "value": "${{ steps.vault.outputs.POSTGRES_PASSWORD }}"},
+                {"name": "POSTGRES_DB", "value": "${{ steps.vault.outputs.POSTGRES_DB }}"},
                 {"name": "HOST_PORT", "value": "${{ steps.vault.outputs.HOST_PORT }}"}
               ],
               "stackFileContent": ${{ env.COMPOSE_CONTENT }},
@@ -169,6 +181,12 @@ jobs:
               "env": [
                 {"name": "WEB_IMAGE", "value": "${{ steps.image.outputs.ref }}"},
                 {"name": "DISCORD_CLIENT_ID", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_ID }}"},
+                {"name": "DISCORD_CLIENT_SECRET", "value": "${{ steps.vault.outputs.DISCORD_CLIENT_SECRET }}"},
+                {"name": "AUTH_SECRET", "value": "${{ steps.vault.outputs.AUTH_SECRET }}"},
+                {"name": "AUTH_URL", "value": "${{ steps.vault.outputs.AUTH_URL }}"},
+                {"name": "POSTGRES_USER", "value": "${{ steps.vault.outputs.POSTGRES_USER }}"},
+                {"name": "POSTGRES_PASSWORD", "value": "${{ steps.vault.outputs.POSTGRES_PASSWORD }}"},
+                {"name": "POSTGRES_DB", "value": "${{ steps.vault.outputs.POSTGRES_DB }}"},
                 {"name": "HOST_PORT", "value": "${{ steps.vault.outputs.HOST_PORT }}"}
               ],
               "name": "${{ env.STACK_NAME }}",

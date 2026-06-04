@@ -26,3 +26,25 @@ body {
   font-family: ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+
+a {
+  color: inherit;
+}
+
+input {
+  outline-color: var(--primary);
+}
+
+/* Mobile: stack hero buttons full-width */
+@media (max-width: 600px) {
+  .hero-actions {
+    flex-direction: column !important;
+    width: 100%;
+  }
+
+  .hero-actions a {
+    width: 100% !important;
+    text-align: center !important;
+    box-sizing: border-box;
+  }
+}
