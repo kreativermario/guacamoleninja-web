@@ -23,6 +23,5 @@ ENV HOSTNAME=0.0.0.0
 COPY --from=builder --chown=65532:65532 /app/.next/standalone ./
 COPY --from=builder --chown=65532:65532 /app/.next/static ./.next/static
 COPY --from=builder --chown=65532:65532 /app/public ./public
-COPY --from=builder --chown=65532:65532 /app/node_modules/.prisma ./node_modules/.prisma
 EXPOSE 3000
 CMD ["server.js"]
