@@ -51,7 +51,7 @@ export default function Home() {
       <nav style={{
         position: "sticky", top: 0, zIndex: 10,
         borderBottom: "1px solid var(--border)",
-        background: "rgba(13,13,13,0.9)", backdropFilter: "blur(12px)",
+        background: "rgba(15,15,15,0.85)", backdropFilter: "blur(12px)",
         padding: "0 1.5rem",
         display: "flex", alignItems: "center", justifyContent: "space-between",
         height: "56px",

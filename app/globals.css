@@ -1,8 +1,9 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --bg: #0d0d0d;
-  --bg-card: #151515;
+  --bg: #0f0f0f;
+  --bg-card: #161616;
   --border: #222;
   --text: #e2e8f0;
   --muted: #9ca3af;
@@ -23,7 +24,7 @@ html {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
