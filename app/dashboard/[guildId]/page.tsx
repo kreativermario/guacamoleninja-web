@@ -6,6 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { updateGuildConfig, updateCommandsConfig } from "./actions";
 
+export const dynamic = "force-dynamic";
+
 const COMMANDS = [
   {
     name: "weather",

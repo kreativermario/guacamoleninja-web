@@ -18,7 +18,7 @@ export async function getUserGuilds(userId: string): Promise<DiscordGuild[]> {
 
   const res = await fetch("https://discord.com/api/users/@me/guilds", {
     headers: { Authorization: `Bearer ${account.access_token}` },
-    next: { revalidate: 60 },
+    cache: "no-store",
     signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) return [];

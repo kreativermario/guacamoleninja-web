@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic";
+
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? "";
 const INVITE_BASE = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&permissions=66448710&scope=bot+applications.commands`;
 
@@ -13,10 +15,12 @@ export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const [guilds, botGuildIds] = await Promise.all([
+  const [guilds, botResult] = await Promise.all([
     getUserGuilds(session.user.id),
     getBotGuildIds(),
   ]);
+  const botGuildIds = botResult.ok ? botResult.ids : new Set<string>();
+  const botApiError = botResult.ok ? null : botResult.error;
 
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -76,6 +80,27 @@ export default async function DashboardPage() {
             Servers where you have Manage Server permission.
           </p>
         </div>
+
+        {botApiError && (
+          <div style={{
+            display: "flex", alignItems: "flex-start", gap: "0.75rem",
+            background: "rgba(239,68,68,0.08)",
+            border: "1px solid rgba(239,68,68,0.3)",
+            borderRadius: "10px",
+            padding: "0.875rem 1rem",
+            marginBottom: "1.5rem",
+            fontSize: "0.825rem",
+            color: "#fca5a5",
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "0.1rem" }} aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span>
+              <strong style={{ color: "#f87171" }}>Bot API unavailable</strong> — bot status may be inaccurate.{" "}
+              <span style={{ opacity: 0.75 }}>{botApiError}</span>
+            </span>
+          </div>
+        )}
 
         {guilds.length === 0 ? (
           <div style={{

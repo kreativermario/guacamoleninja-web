@@ -1,4 +1,4 @@
-const BOT_API_URL = (process.env.BOT_API_URL ?? "http://localhost:3001").replace(/\/$/, "");
+const BOT_API_URL = (process.env.BOT_API_URL ?? "http://localhost:3002").replace(/\/$/, "");
 const BOT_API_SECRET = process.env.BOT_API_SECRET ?? "";
 
 export type BotGuildConfig = {
@@ -25,19 +25,25 @@ function headers() {
   };
 }
 
+export type BotGuildIdsResult =
+  | { ok: true; ids: Set<string> }
+  | { ok: false; error: string };
+
 /** Returns the set of guild IDs where the bot is currently active. */
-export async function getBotGuildIds(): Promise<Set<string>> {
+export async function getBotGuildIds(): Promise<BotGuildIdsResult> {
   try {
     const res = await fetch(`${BOT_API_URL}/guilds`, {
       headers: headers(),
       cache: "no-store",
     });
-    if (!res.ok) throw new Error(`Bot API ${res.status}`);
+    if (res.status === 401) return { ok: false, error: "Bot API: unauthorized (check BOT_API_SECRET)" };
+    if (!res.ok) return { ok: false, error: `Bot API: HTTP ${res.status}` };
     const data = (await res.json()) as { guilds: { id: string }[] };
-    return new Set(data.guilds.map((g) => g.id));
+    return { ok: true, ids: new Set(data.guilds.map((g) => g.id)) };
   } catch (err) {
-    console.error("[bot-api] getBotGuildIds failed:", err);
-    return new Set();
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[bot-api] getBotGuildIds failed:", msg);
+    return { ok: false, error: `Bot API unreachable: ${msg}` };
   }
 }
 
