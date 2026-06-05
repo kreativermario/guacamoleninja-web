@@ -17,6 +17,8 @@ services:
       AUTH_SECRET: ${AUTH_SECRET}
       AUTH_URL: ${AUTH_URL}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      BOT_API_URL: ${BOT_API_URL}
+      BOT_API_SECRET: ${BOT_API_SECRET}
     ports:
       - "${HOST_PORT}:3000"
     depends_on:

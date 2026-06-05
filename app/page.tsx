@@ -1,43 +1,69 @@
+import Image from "next/image";
+
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? "";
 const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&permissions=66448710&scope=bot+applications.commands`;
-
 const DOCS_URL = "https://docs.guacamoleninja.com";
-const DASHBOARD_URL = "/dashboard";
 const GITHUB_URL = "https://github.com/kreativermario/guacamoleninja-bot";
 
 const FEATURES = [
   {
-    icon: "🌤",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+      </svg>
+    ),
     title: "Weather",
     description: "Current conditions and forecasts for any city via /weather.",
   },
   {
-    icon: "📊",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <line x1="18" y1="20" x2="18" y2="10"/>
+        <line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+    ),
     title: "Polls",
     description: "Reaction-based polls with /poll — quick community votes.",
   },
   {
-    icon: "⏰",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+      </svg>
+    ),
     title: "Reminders",
     description: "Set personal reminders with /remind. Never miss a thing.",
   },
   {
-    icon: "⚙️",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.07 4.93a10 10 0 0 1 1.8 14.14A10 10 0 1 1 4.93 4.93a10 10 0 0 1 14.14 0"/>
+      </svg>
+    ),
     title: "Per-server config",
     description: "Timezone, prefix, and more via /config — per-server settings.",
   },
 ];
 
 const SETUP_STEPS = [
-  { step: "1", title: "Add to your server", description: "Click the invite button and select your server." },
-  { step: "2", title: "Configure (optional)", description: "Run /config set timezone to set your server timezone." },
+  { step: "1", title: "Add to your server", description: "Invite the bot and select your Discord server." },
+  { step: "2", title: "Configure (optional)", description: "Run /config set timezone to match your server." },
   { step: "3", title: "Use it", description: "Try /weather, /poll, or any other command." },
 ];
 
-function ShurikenIcon({ style }: { style?: React.CSSProperties }) {
+function ShurikenIcon({ size = 24, style }: { size?: number; style?: React.CSSProperties }) {
   return (
-    <svg style={style} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <polygon points="50,5 61,39 95,50 61,61 50,95 39,61 5,50 39,39" fill="currentColor" opacity="0.9" />
+    <svg
+      width={size} height={size}
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+      style={style}
+      aria-hidden="true"
+    >
+      <polygon points="50,4 62,38 96,50 62,62 50,96 38,62 4,50 38,38" fill="currentColor" opacity="0.92" />
       <circle cx="50" cy="50" r="10" fill="var(--bg)" />
       <circle cx="50" cy="50" r="5" fill="currentColor" />
     </svg>
@@ -46,138 +72,197 @@ function ShurikenIcon({ style }: { style?: React.CSSProperties }) {
 
 export default function Home() {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
+
       {/* Nav */}
-      <nav style={{
-        position: "sticky", top: 0, zIndex: 10,
-        borderBottom: "1px solid var(--border)",
-        background: "rgba(15,15,15,0.85)", backdropFilter: "blur(12px)",
-        padding: "0 1.5rem",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        height: "56px",
-      }}>
+      <nav
+        role="navigation"
+        aria-label="Main navigation"
+        style={{
+          position: "sticky", top: 0, zIndex: 40,
+          borderBottom: "1px solid var(--border)",
+          background: "rgba(2,6,23,0.85)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          padding: "0 1.5rem",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          height: "56px",
+        }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <ShurikenIcon style={{ width: "22px", height: "22px", color: "var(--primary)" }} />
-          <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>guacamoleninja-bot</span>
+          <ShurikenIcon size={20} style={{ color: "var(--primary)" }} />
+          <span style={{ fontWeight: 700, fontSize: "0.925rem", letterSpacing: "-0.02em" }}>
+            guacamoleninja
+          </span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", fontSize: "0.875rem" }}>
-          <a href={DOCS_URL} target="_blank" rel="noopener noreferrer"
-            style={{ color: "var(--muted)", textDecoration: "none" }}>
-            docs
-          </a>
-          <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer"
-            style={{ color: "var(--muted)", textDecoration: "none" }}>
-            dashboard
-          </a>
-          <a href={INVITE_URL} target="_blank" rel="noopener noreferrer"
-            style={{
-              background: "var(--primary-dark)", color: "#fff",
-              padding: "0.35rem 0.85rem", borderRadius: "6px",
-              textDecoration: "none", fontWeight: 600, fontSize: "0.8rem",
-            }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.125rem" }}>
+          <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="nav-link">Docs</a>
+          <a href="/dashboard" className="nav-link">Dashboard</a>
+          <a href={INVITE_URL} target="_blank" rel="noopener noreferrer" className="nav-invite">
             Add to Discord
           </a>
         </div>
       </nav>
 
       <main style={{ flex: 1 }}>
+
         {/* Hero */}
         <section style={{
-          textAlign: "center", padding: "6rem 1.5rem 4rem",
+          textAlign: "center",
+          padding: "7rem 1.5rem 5rem",
           display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem",
         }}>
-          <ShurikenIcon style={{ width: "64px", height: "64px", color: "var(--primary)" }} />
-          <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 800, lineHeight: 1.1 }}>
+          {/* Mascot */}
+          <div style={{
+            width: 88, height: 88,
+            borderRadius: "22px",
+            overflow: "hidden",
+            border: "2px solid var(--border)",
+          }}>
+            <Image
+              src="/mascot.jpg"
+              alt="guacamoleninja mascot"
+              width={88} height={88}
+              style={{ display: "block", objectFit: "cover" }}
+            />
+          </div>
+
+          {/* Badge */}
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: "0.4rem",
+            background: "var(--primary-dim)",
+            border: "1px solid rgba(120,168,106,0.2)",
+            color: "var(--primary)",
+            padding: "0.25rem 0.75rem",
+            borderRadius: "999px",
+            fontSize: "0.72rem",
+            fontWeight: 600,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+          }}>
+            <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--primary)", display: "inline-block", flexShrink: 0 }} />
+            Open source · Self-hostable
+          </div>
+
+          <h1 style={{
+            fontSize: "clamp(2.25rem, 5.5vw, 3.75rem)",
+            fontWeight: 800,
+            lineHeight: 1.08,
+            letterSpacing: "-0.04em",
+            marginTop: "-0.5rem",
+          }}>
             guacamoleninja&#8209;bot
           </h1>
-          <p style={{ fontSize: "1.125rem", color: "var(--muted)", maxWidth: "480px", lineHeight: 1.6 }}>
-            A utility Discord bot for small communities. Weather, polls, reminders, and server tools — all in one place.
+
+          <p style={{
+            fontSize: "1.125rem",
+            color: "var(--muted)",
+            maxWidth: "460px",
+            lineHeight: 1.65,
+          }}>
+            A utility Discord bot for small communities.
+            Weather, polls, reminders, and server tools — all in one place.
           </p>
-          <div className="hero-actions" style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center" }}>
-            <a href={INVITE_URL} target="_blank" rel="noopener noreferrer"
-              style={{
-                background: "var(--primary-dark)", color: "#fff",
-                padding: "0.75rem 1.5rem", borderRadius: "8px",
-                textDecoration: "none", fontWeight: 700, fontSize: "1rem",
-              }}>
+
+          <div
+            className="hero-actions"
+            style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center", marginTop: "0.5rem" }}
+          >
+            <a href={INVITE_URL} target="_blank" rel="noopener noreferrer" className="btn-primary">
               Add to Discord
             </a>
-            <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer"
-              style={{
-                background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text)",
-                padding: "0.75rem 1.5rem", borderRadius: "8px",
-                textDecoration: "none", fontWeight: 600, fontSize: "1rem",
-              }}>
+            <a href="/dashboard" className="btn-outline">
               Dashboard
             </a>
-            <a href={DOCS_URL} target="_blank" rel="noopener noreferrer"
-              style={{
-                border: "1px solid var(--border)", color: "var(--text)",
-                padding: "0.75rem 1.5rem", borderRadius: "8px",
-                textDecoration: "none", fontWeight: 600, fontSize: "1rem",
-              }}>
+            <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="btn-ghost">
               Docs →
             </a>
           </div>
         </section>
 
         {/* Features */}
-        <section style={{ padding: "3rem 1.5rem", maxWidth: "900px", margin: "0 auto" }}>
-          <h2 style={{ textAlign: "center", fontSize: "1.5rem", fontWeight: 700, marginBottom: "2rem" }}>
+        <section
+          aria-label="Features"
+          style={{ padding: "2rem 1.5rem 3rem", maxWidth: "960px", margin: "0 auto" }}
+        >
+          <p style={{
+            textAlign: "center",
+            fontSize: "0.72rem", fontWeight: 600,
+            letterSpacing: "0.08em", textTransform: "uppercase",
+            color: "var(--muted)", marginBottom: "1.5rem",
+          }}>
             What it does
-          </h2>
+          </p>
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "1rem",
+            gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+            gap: "1px",
+            background: "var(--border)",
+            borderRadius: "12px",
+            overflow: "hidden",
+            border: "1px solid var(--border)",
           }}>
             {FEATURES.map((f) => (
-              <div key={f.title} style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border)",
-                borderRadius: "10px", padding: "1.25rem",
-              }}>
-                <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>{f.icon}</div>
-                <div style={{ fontWeight: 700, marginBottom: "0.35rem" }}>{f.title}</div>
-                <div style={{ fontSize: "0.85rem", color: "var(--muted)", lineHeight: 1.5 }}>{f.description}</div>
+              <div key={f.title} style={{ background: "var(--bg-card)", padding: "1.5rem" }}>
+                <div style={{
+                  width: 40, height: 40,
+                  borderRadius: "10px",
+                  background: "var(--primary-dim)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "var(--primary)",
+                  marginBottom: "1rem",
+                }}>
+                  {f.icon}
+                </div>
+                <div style={{ fontWeight: 700, fontSize: "0.9375rem", marginBottom: "0.375rem", letterSpacing: "-0.01em" }}>
+                  {f.title}
+                </div>
+                <div style={{ fontSize: "0.85rem", color: "var(--muted)", lineHeight: 1.6 }}>
+                  {f.description}
+                </div>
               </div>
             ))}
           </div>
         </section>
 
         {/* Setup */}
-        <section style={{ padding: "3rem 1.5rem 5rem", maxWidth: "640px", margin: "0 auto" }}>
-          <h2 style={{ textAlign: "center", fontSize: "1.5rem", fontWeight: 700, marginBottom: "2rem" }}>
+        <section
+          aria-label="Get started"
+          style={{ padding: "2rem 1.5rem 6rem", maxWidth: "560px", margin: "0 auto" }}
+        >
+          <p style={{
+            textAlign: "center",
+            fontSize: "0.72rem", fontWeight: 600,
+            letterSpacing: "0.08em", textTransform: "uppercase",
+            color: "var(--muted)", marginBottom: "1.5rem",
+          }}>
             Get started in 3 steps
-          </h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             {SETUP_STEPS.map((s) => (
-              <div key={s.step} style={{
-                display: "flex", gap: "1rem", alignItems: "flex-start",
-                background: "var(--bg-card)", border: "1px solid var(--border)",
-                borderRadius: "10px", padding: "1.25rem",
-              }}>
+              <div key={s.step} className="card-step">
                 <div style={{
-                  width: "32px", height: "32px", borderRadius: "50%", flexShrink: 0,
-                  background: "var(--primary-dark)", color: "#fff",
+                  width: 28, height: 28, borderRadius: "8px", flexShrink: 0,
+                  background: "var(--primary-dim)",
+                  border: "1px solid rgba(120,168,106,0.2)",
+                  color: "var(--primary)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontWeight: 700, fontSize: "0.875rem",
+                  fontWeight: 700, fontSize: "0.8rem",
                 }}>
                   {s.step}
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, marginBottom: "0.25rem" }}>{s.title}</div>
-                  <div style={{ fontSize: "0.85rem", color: "var(--muted)" }}>{s.description}</div>
+                  <div style={{ fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.2rem" }}>{s.title}</div>
+                  <div style={{ fontSize: "0.8375rem", color: "var(--muted)", lineHeight: 1.5 }}>{s.description}</div>
                 </div>
               </div>
             ))}
           </div>
-          <div style={{ textAlign: "center", marginTop: "2rem" }}>
-            <a href={DOCS_URL} target="_blank" rel="noopener noreferrer"
-              style={{ color: "var(--primary)", textDecoration: "none", fontWeight: 600 }}>
+          <p style={{ textAlign: "center", marginTop: "2rem" }}>
+            <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="link-primary" style={{ fontSize: "0.875rem" }}>
               Full documentation at docs.guacamoleninja.com →
             </a>
-          </div>
+          </p>
         </section>
       </main>
 
@@ -190,15 +275,15 @@ export default function Home() {
         fontSize: "0.8rem", color: "var(--muted)",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-          <ShurikenIcon style={{ width: "14px", height: "14px", color: "var(--primary)" }} />
+          <ShurikenIcon size={14} style={{ color: "var(--primary)" }} />
           <span>guacamoleninja-bot</span>
         </div>
-        <div style={{ display: "flex", gap: "1.25rem" }}>
-          <a href={INVITE_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)", textDecoration: "none" }}>Invite</a>
-          <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)", textDecoration: "none" }}>Docs</a>
-          <a href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)", textDecoration: "none" }}>Dashboard</a>
-          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)", textDecoration: "none" }}>GitHub</a>
-        </div>
+        <nav aria-label="Footer links" style={{ display: "flex", gap: "1.25rem" }}>
+          <a href={INVITE_URL} target="_blank" rel="noopener noreferrer" className="footer-link">Invite</a>
+          <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="footer-link">Docs</a>
+          <a href="/dashboard" className="footer-link">Dashboard</a>
+          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
+        </nav>
       </footer>
     </div>
   );

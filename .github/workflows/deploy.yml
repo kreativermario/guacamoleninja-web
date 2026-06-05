@@ -113,7 +113,9 @@ jobs:
             ${{ env.VAULT_PATH }} POSTGRES_USER | POSTGRES_USER ;
             ${{ env.VAULT_PATH }} POSTGRES_PASSWORD | POSTGRES_PASSWORD ;
             ${{ env.VAULT_PATH }} POSTGRES_DB | POSTGRES_DB ;
-            ${{ env.VAULT_PATH }} HOST_PORT | HOST_PORT
+            ${{ env.VAULT_PATH }} HOST_PORT | HOST_PORT ;
+            ${{ env.VAULT_PATH }} BOT_API_URL | BOT_API_URL ;
+            ${{ env.VAULT_PATH }} BOT_API_SECRET | BOT_API_SECRET
 
       - name: Resolve image refs
         id: image
@@ -175,7 +177,9 @@ jobs:
                 {"name": "POSTGRES_USER", "value": "${{ steps.vault.outputs.POSTGRES_USER }}"},
                 {"name": "POSTGRES_PASSWORD", "value": "${{ steps.vault.outputs.POSTGRES_PASSWORD }}"},
                 {"name": "POSTGRES_DB", "value": "${{ steps.vault.outputs.POSTGRES_DB }}"},
-                {"name": "HOST_PORT", "value": "${{ steps.vault.outputs.HOST_PORT }}"}
+                {"name": "HOST_PORT", "value": "${{ steps.vault.outputs.HOST_PORT }}"},
+                {"name": "BOT_API_URL", "value": "${{ steps.vault.outputs.BOT_API_URL }}"},
+                {"name": "BOT_API_SECRET", "value": "${{ steps.vault.outputs.BOT_API_SECRET }}"}
               ],
               "stackFileContent": ${{ env.COMPOSE_CONTENT }},
               "prune": true,
@@ -203,7 +207,9 @@ jobs:
                 {"name": "POSTGRES_USER", "value": "${{ steps.vault.outputs.POSTGRES_USER }}"},
                 {"name": "POSTGRES_PASSWORD", "value": "${{ steps.vault.outputs.POSTGRES_PASSWORD }}"},
                 {"name": "POSTGRES_DB", "value": "${{ steps.vault.outputs.POSTGRES_DB }}"},
-                {"name": "HOST_PORT", "value": "${{ steps.vault.outputs.HOST_PORT }}"}
+                {"name": "HOST_PORT", "value": "${{ steps.vault.outputs.HOST_PORT }}"},
+                {"name": "BOT_API_URL", "value": "${{ steps.vault.outputs.BOT_API_URL }}"},
+                {"name": "BOT_API_SECRET", "value": "${{ steps.vault.outputs.BOT_API_SECRET }}"}
               ],
               "name": "${{ env.STACK_NAME }}",
               "fromAppTemplate": false,
