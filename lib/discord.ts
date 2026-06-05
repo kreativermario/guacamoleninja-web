@@ -1,4 +1,5 @@
 import { prisma } from "./prisma";
+import { logger } from "./logger";
 
 const MANAGE_GUILD = BigInt(0x20);
 
@@ -16,17 +17,25 @@ export async function getUserGuilds(userId: string): Promise<DiscordGuild[]> {
   });
   if (!account?.access_token) return [];
 
+  const t = Date.now();
   const res = await fetch("https://discord.com/api/users/@me/guilds", {
     headers: { Authorization: `Bearer ${account.access_token}` },
     cache: "no-store",
     signal: AbortSignal.timeout(8000),
   });
-  if (!res.ok) return [];
+  const ms = Date.now() - t;
+
+  if (!res.ok) {
+    logger.warn("discord", "getUserGuilds non-ok", { userId, status: res.status, ms });
+    return [];
+  }
 
   const guilds: DiscordGuild[] = await res.json();
-  return guilds.filter(
+  const filtered = guilds.filter(
     (g) => (BigInt(g.permissions) & MANAGE_GUILD) === MANAGE_GUILD,
   );
+  logger.info("discord", "getUserGuilds ok", { userId, total: guilds.length, managed: filtered.length, ms });
+  return filtered;
 }
 
 export function guildIconUrl(id: string, hash: string | null): string | null {
