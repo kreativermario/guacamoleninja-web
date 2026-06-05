@@ -13,8 +13,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    session({ session, user }) {
+    async session({ session, user }) {
       session.user.id = user.id;
+      const account = await prisma.account.findFirst({
+        where: { userId: user.id, provider: "discord" },
+        select: { providerAccountId: true },
+      });
+      (session.user as { id: string; discordId?: string }).discordId = account?.providerAccountId;
       return session;
     },
   },

@@ -54,21 +54,6 @@ const SETUP_STEPS = [
   { step: "3", title: "Use it", description: "Try /weather, /poll, or any other command." },
 ];
 
-function ShurikenIcon({ size = 24, style }: { size?: number; style?: React.CSSProperties }) {
-  return (
-    <svg
-      width={size} height={size}
-      viewBox="0 0 100 100"
-      xmlns="http://www.w3.org/2000/svg"
-      style={style}
-      aria-hidden="true"
-    >
-      <polygon points="50,4 62,38 96,50 62,62 50,96 38,62 4,50 38,38" fill="currentColor" opacity="0.92" />
-      <circle cx="50" cy="50" r="10" fill="var(--bg)" />
-      <circle cx="50" cy="50" r="5" fill="currentColor" />
-    </svg>
-  );
-}
 
 export default function Home() {
   return (
@@ -90,7 +75,7 @@ export default function Home() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <ShurikenIcon size={20} style={{ color: "var(--primary)" }} />
+          <Image src="/mascot.jpg" alt="" width={24} height={24} style={{ borderRadius: "6px", flexShrink: 0 }} />
           <span style={{ fontWeight: 700, fontSize: "0.925rem", letterSpacing: "-0.02em" }}>
             guacamoleninja
           </span>
@@ -275,7 +260,7 @@ export default function Home() {
         fontSize: "0.8rem", color: "var(--muted)",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-          <ShurikenIcon size={14} style={{ color: "var(--primary)" }} />
+          <Image src="/mascot.jpg" alt="" width={16} height={16} style={{ borderRadius: "4px", flexShrink: 0 }} />
           <span>guacamoleninja-bot</span>
         </div>
         <nav aria-label="Footer links" style={{ display: "flex", gap: "1.25rem" }}>

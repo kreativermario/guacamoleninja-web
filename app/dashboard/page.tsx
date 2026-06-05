@@ -41,11 +41,7 @@ export default async function DashboardPage() {
         }}
       >
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ color: "var(--primary)" }} aria-hidden="true">
-            <polygon points="50,4 62,38 96,50 62,62 50,96 38,62 4,50 38,38" fill="currentColor" opacity="0.92" />
-            <circle cx="50" cy="50" r="10" fill="var(--bg)" />
-            <circle cx="50" cy="50" r="5" fill="currentColor" />
-          </svg>
+          <Image src="/mascot.jpg" alt="" width={24} height={24} style={{ borderRadius: "6px", flexShrink: 0 }} />
           <span style={{ fontWeight: 700, fontSize: "0.925rem", letterSpacing: "-0.02em" }}>guacamoleninja</span>
         </Link>
 

@@ -11,6 +11,40 @@ export type BotGuildConfig = {
   updatedAt: string;
 };
 
+export type BotWelcomeConfig = {
+  guildId: string;
+  enabled: boolean;
+  channelId: string;
+  message: string;
+  updatedAt: string;
+};
+
+export type BotChannel = {
+  id: string;
+  name: string;
+};
+
+export type BotCommandStat = {
+  name: string;
+  count: number;
+};
+
+export type BotStats = {
+  period: string;
+  commands: BotCommandStat[];
+  total: number;
+};
+
+export type BotAuditEntry = {
+  id: string;
+  guildId: string;
+  actorId: string;
+  actorName: string;
+  action: string;
+  changes: Record<string, [unknown, unknown]>;
+  createdAt: string;
+};
+
 export type BotGuild = {
   id: string;
   name: string;
@@ -18,6 +52,7 @@ export type BotGuild = {
   joinedAt: string;
   leftAt: null;
   config: BotGuildConfig | null;
+  welcomeConfig: BotWelcomeConfig | null;
 };
 
 export type BotGuildIdsResult =
@@ -87,13 +122,15 @@ export async function getBotGuild(guildId: string): Promise<BotGuild | null> {
 /** Updates one or more config fields for a guild. */
 export async function patchBotGuildConfig(
   guildId: string,
-  data: Partial<Pick<BotGuildConfig, "prefix" | "timezone" | "disabledCommands">>
+  data: Partial<Pick<BotGuildConfig, "prefix" | "timezone" | "disabledCommands">>,
+  actor?: { actorId: string; actorName: string },
 ): Promise<BotGuildConfig> {
   const t = Date.now();
+  const body = actor ? { ...data, ...actor } : data;
   const res = await fetch(`${BOT_API_URL}/guilds/${guildId}/config`, {
     method: "PATCH",
     headers: headers(),
-    body: JSON.stringify(data),
+    body: JSON.stringify(body),
     cache: "no-store",
   });
   const ms = Date.now() - t;
@@ -104,4 +141,94 @@ export async function patchBotGuildConfig(
   }
   logger.info("bot-api", "patchBotGuildConfig ok", { guildId, ms });
   return ((await res.json()) as { config: BotGuildConfig }).config;
+}
+
+/** Returns the text channels for a guild (proxied via the bot). */
+export async function getBotGuildChannels(guildId: string): Promise<BotChannel[]> {
+  const t = Date.now();
+  try {
+    const res = await fetch(`${BOT_API_URL}/guilds/${guildId}/channels`, {
+      headers: headers(),
+      cache: "no-store",
+    });
+    const ms = Date.now() - t;
+    if (!res.ok) {
+      logger.warn("bot-api", "getBotGuildChannels non-ok", { guildId, status: res.status, ms });
+      return [];
+    }
+    const data = (await res.json()) as { channels: BotChannel[] };
+    logger.info("bot-api", "getBotGuildChannels ok", { guildId, count: data.channels.length, ms });
+    return data.channels;
+  } catch (err) {
+    logger.error("bot-api", "getBotGuildChannels failed", { guildId, err: String(err), ms: Date.now() - t });
+    return [];
+  }
+}
+
+/** Returns 30-day command usage stats for a guild. */
+export async function getBotGuildStats(guildId: string): Promise<BotStats | null> {
+  const t = Date.now();
+  try {
+    const res = await fetch(`${BOT_API_URL}/guilds/${guildId}/stats`, {
+      headers: headers(),
+      cache: "no-store",
+    });
+    const ms = Date.now() - t;
+    if (!res.ok) {
+      logger.warn("bot-api", "getBotGuildStats non-ok", { guildId, status: res.status, ms });
+      return null;
+    }
+    const data = (await res.json()) as { stats: BotStats };
+    logger.info("bot-api", "getBotGuildStats ok", { guildId, ms });
+    return data.stats;
+  } catch (err) {
+    logger.error("bot-api", "getBotGuildStats failed", { guildId, err: String(err), ms: Date.now() - t });
+    return null;
+  }
+}
+
+/** Returns the last 50 audit log entries for a guild. */
+export async function getBotAuditLog(guildId: string): Promise<BotAuditEntry[]> {
+  const t = Date.now();
+  try {
+    const res = await fetch(`${BOT_API_URL}/guilds/${guildId}/audit`, {
+      headers: headers(),
+      cache: "no-store",
+    });
+    const ms = Date.now() - t;
+    if (!res.ok) {
+      logger.warn("bot-api", "getBotAuditLog non-ok", { guildId, status: res.status, ms });
+      return [];
+    }
+    const data = (await res.json()) as { logs: BotAuditEntry[] };
+    logger.info("bot-api", "getBotAuditLog ok", { guildId, count: data.logs.length, ms });
+    return data.logs;
+  } catch (err) {
+    logger.error("bot-api", "getBotAuditLog failed", { guildId, err: String(err), ms: Date.now() - t });
+    return [];
+  }
+}
+
+/** Updates welcome message configuration for a guild. */
+export async function patchBotWelcomeConfig(
+  guildId: string,
+  data: Partial<Pick<BotWelcomeConfig, "enabled" | "channelId" | "message">>,
+  actor?: { actorId: string; actorName: string },
+): Promise<BotWelcomeConfig> {
+  const t = Date.now();
+  const body = actor ? { ...data, ...actor } : data;
+  const res = await fetch(`${BOT_API_URL}/guilds/${guildId}/welcome`, {
+    method: "PATCH",
+    headers: headers(),
+    body: JSON.stringify(body),
+    cache: "no-store",
+  });
+  const ms = Date.now() - t;
+  if (!res.ok) {
+    const msg = await res.text().catch(() => res.status.toString());
+    logger.error("bot-api", "patchBotWelcomeConfig failed", { guildId, status: res.status, err: msg, ms });
+    throw new Error(`Bot API error: ${msg}`);
+  }
+  logger.info("bot-api", "patchBotWelcomeConfig ok", { guildId, ms });
+  return ((await res.json()) as { welcomeConfig: BotWelcomeConfig }).welcomeConfig;
 }
