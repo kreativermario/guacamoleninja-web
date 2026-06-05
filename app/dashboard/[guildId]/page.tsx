@@ -63,14 +63,18 @@ export default async function GuildPage({
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const guilds = await getUserGuilds(session.user.id);
-  const guild = guilds.find((g) => g.id === guildId);
-  if (!guild) notFound();
+  const [guilds, botGuild] = await Promise.all([
+    getUserGuilds(session.user.id),
+    getBotGuild(guildId),
+  ]);
 
-  const botGuild = await getBotGuild(guildId);
-  const config = botGuild?.config ?? null;
+  // IDOR guard — verify the user manages this guild via Discord permissions.
+  // getUserGuilds is cached 60s so this doesn't hit Discord on every page load.
+  if (!guilds.some((g) => g.id === guildId)) notFound();
+  if (!botGuild) notFound();
 
-  const icon = guildIconUrl(guildId, guild.icon);
+  const config = botGuild.config ?? null;
+  const icon = guildIconUrl(guildId, botGuild.iconHash);
   const disabledCommands = config?.disabledCommands ?? [];
 
   return (
@@ -102,49 +106,11 @@ export default async function GuildPage({
         {icon && (
           <Image src={icon} alt="" width={20} height={20} style={{ borderRadius: "6px" }} />
         )}
-        <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>{guild.name}</span>
+        <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>{botGuild.name}</span>
       </nav>
 
       <main style={{ flex: 1, maxWidth: "600px", margin: "0 auto", padding: "2.5rem 1.5rem", width: "100%" }}>
 
-        {!botGuild ? (
-          /* Bot not in server */
-          <div style={{
-            background: "var(--bg-card)",
-            border: "1px solid var(--border)",
-            borderRadius: "12px",
-            padding: "2.5rem 1.5rem",
-            textAlign: "center",
-          }}>
-            <div style={{
-              width: 48, height: 48,
-              borderRadius: "12px",
-              background: "rgba(239,68,68,0.1)",
-              border: "1px solid rgba(239,68,68,0.2)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#EF4444",
-              margin: "0 auto 1.25rem",
-            }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
-            </div>
-            <p style={{ fontWeight: 600, marginBottom: "0.375rem", color: "var(--text)" }}>Bot not in this server</p>
-            <p style={{ color: "var(--muted)", fontSize: "0.875rem", marginBottom: "1.5rem", lineHeight: 1.6 }}>
-              The bot hasn&apos;t joined this server yet, or hasn&apos;t synced its data.
-            </p>
-            <a
-              href={`https://discord.com/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&permissions=66448710&scope=bot+applications.commands&guild_id=${guildId}`}
-              target="_blank" rel="noopener noreferrer"
-              className="btn-save"
-            >
-              Add Bot to Server
-            </a>
-          </div>
-        ) : (
-          <>
             {/* ── General Settings ────────────────────────────── */}
             <div style={{ marginBottom: "1.75rem" }}>
               <h1 style={{
@@ -307,8 +273,6 @@ export default async function GuildPage({
                 <button type="submit" className="btn-save">Save Commands</button>
               </div>
             </form>
-          </>
-        )}
       </main>
     </div>
   );

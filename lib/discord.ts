@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "./prisma";
 import { logger } from "./logger";
 
@@ -10,6 +11,33 @@ export interface DiscordGuild {
   permissions: string;
 }
 
+// Fetches from Discord — throws on error so unstable_cache does not store failures.
+const fetchManagedGuilds = unstable_cache(
+  async (userId: string, accessToken: string): Promise<DiscordGuild[]> => {
+    const t = Date.now();
+    const res = await fetch("https://discord.com/api/users/@me/guilds", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: "no-store",
+      signal: AbortSignal.timeout(8000),
+    });
+    const ms = Date.now() - t;
+
+    if (!res.ok) {
+      logger.warn("discord", "getUserGuilds non-ok", { userId, status: res.status, ms });
+      throw new Error(`Discord API ${res.status}`);
+    }
+
+    const guilds: DiscordGuild[] = await res.json();
+    const filtered = guilds.filter(
+      (g) => (BigInt(g.permissions) & MANAGE_GUILD) === MANAGE_GUILD,
+    );
+    logger.info("discord", "getUserGuilds ok", { userId, total: guilds.length, managed: filtered.length, ms });
+    return filtered;
+  },
+  ["discord-managed-guilds"],
+  { revalidate: 60 },
+);
+
 export async function getUserGuilds(userId: string): Promise<DiscordGuild[]> {
   const account = await prisma.account.findFirst({
     where: { userId, provider: "discord" },
@@ -17,25 +45,11 @@ export async function getUserGuilds(userId: string): Promise<DiscordGuild[]> {
   });
   if (!account?.access_token) return [];
 
-  const t = Date.now();
-  const res = await fetch("https://discord.com/api/users/@me/guilds", {
-    headers: { Authorization: `Bearer ${account.access_token}` },
-    cache: "no-store",
-    signal: AbortSignal.timeout(8000),
-  });
-  const ms = Date.now() - t;
-
-  if (!res.ok) {
-    logger.warn("discord", "getUserGuilds non-ok", { userId, status: res.status, ms });
+  try {
+    return await fetchManagedGuilds(userId, account.access_token);
+  } catch {
     return [];
   }
-
-  const guilds: DiscordGuild[] = await res.json();
-  const filtered = guilds.filter(
-    (g) => (BigInt(g.permissions) & MANAGE_GUILD) === MANAGE_GUILD,
-  );
-  logger.info("discord", "getUserGuilds ok", { userId, total: guilds.length, managed: filtered.length, ms });
-  return filtered;
 }
 
 export function guildIconUrl(id: string, hash: string | null): string | null {
