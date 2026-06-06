@@ -110,6 +110,7 @@ export default function Home() {
         >
           <div>
             <h1
+              className="anim-fade-up anim-delay-2"
               style={{
                 fontSize: "clamp(2.75rem, 5vw, 4rem)",
                 fontWeight: 800,
@@ -125,6 +126,7 @@ export default function Home() {
               server
             </h1>
             <p
+              className="anim-fade-up anim-delay-3"
               style={{
                 fontFamily: "var(--font-open-sans), sans-serif",
                 fontSize: "1.125rem",
@@ -138,7 +140,7 @@ export default function Home() {
               communities who want something reliable without the bloat.
             </p>
             <div
-              className="hero-cta"
+              className="hero-cta anim-pop anim-delay-4"
               style={{ display: "flex", gap: "0.875rem", alignItems: "center", flexWrap: "wrap" }}
             >
               <a
@@ -157,7 +159,7 @@ export default function Home() {
           </div>
 
           <div
-            className="hero-mascot"
+            className="hero-mascot anim-fade-in anim-delay-3"
             style={{
               display: "flex",
               alignItems: "center",
