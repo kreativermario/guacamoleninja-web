@@ -161,34 +161,15 @@ export default function Home() {
               padding: "3rem 0",
             }}
           >
-            <div
-              className="mascot-ring"
-              style={{
-                width: 280,
-                height: 280,
-                borderRadius: "50%",
-                background: "radial-gradient(circle, rgba(74,124,89,0.16) 0%, transparent 70%)",
-                border: "2px solid rgba(120,168,106,0.2)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: "0 0 80px rgba(74,124,89,0.1)",
-              }}
-            >
-              <Image
-                src="/mascot.jpg"
-                alt="guacamoleninja mascot"
-                width={200}
-                height={200}
-                className="mascot-img"
-                style={{
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  border: "3px solid rgba(120,168,106,0.3)",
-                }}
-                priority
-              />
-            </div>
+            <Image
+              src="/mascot.jpg"
+              alt="guacamoleninja mascot"
+              width={280}
+              height={280}
+              className="mascot-img"
+              style={{ borderRadius: "24px", objectFit: "cover" }}
+              priority
+            />
           </div>
         </div>
 

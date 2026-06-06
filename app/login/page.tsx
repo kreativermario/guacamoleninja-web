@@ -22,60 +22,77 @@ export default async function LoginPage({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "1.5rem",
+        padding: "2rem 1.5rem",
       }}
     >
       <div
         style={{
           width: "100%",
-          maxWidth: "400px",
+          maxWidth: "460px",
           background: "var(--bg-card)",
           border: "1px solid var(--border)",
-          borderRadius: "20px",
-          padding: "2.75rem 2.25rem",
-          boxShadow: "0 8px 40px rgba(0,0,0,0.45)",
+          borderRadius: "24px",
+          padding: "3.25rem 3rem",
+          boxShadow: "0 12px 60px rgba(0,0,0,0.5)",
           textAlign: "center",
         }}
       >
-        {/* Mascot */}
-        <div
-          style={{
-            width: 88,
-            height: 88,
-            borderRadius: "50%",
-            overflow: "hidden",
-            border: "2.5px solid rgba(120,168,106,0.35)",
-            margin: "0 auto 1.75rem",
-            flexShrink: 0,
-            boxShadow: "0 0 24px rgba(74,124,89,0.2)",
-          }}
-        >
-          <Image
-            src="/mascot.jpg"
-            alt="guacamoleninja"
-            width={88}
-            height={88}
-            style={{ display: "block", objectFit: "cover" }}
-          />
+        {/* Mascot + name */}
+        <div style={{ marginBottom: "2rem" }}>
+          <div
+            style={{
+              width: 128,
+              height: 128,
+              borderRadius: "50%",
+              overflow: "hidden",
+              border: "3px solid rgba(120,168,106,0.4)",
+              margin: "0 auto 1.25rem",
+              boxShadow: "0 0 32px rgba(74,124,89,0.25)",
+            }}
+          >
+            <Image
+              src="/mascot.jpg"
+              alt="guacamoleninja"
+              width={128}
+              height={128}
+              style={{ display: "block", objectFit: "cover" }}
+              priority
+            />
+          </div>
+          <div
+            style={{
+              fontSize: "1.1rem",
+              fontWeight: 800,
+              letterSpacing: "-0.02em",
+              color: "var(--text)",
+              marginBottom: "0.2rem",
+            }}
+          >
+            guacamoleninja
+          </div>
+          <div style={{ fontSize: "0.8rem", color: "var(--primary)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            Discord Bot
+          </div>
         </div>
 
+        {/* Heading */}
         <h1
           style={{
-            fontSize: "1.625rem",
+            fontSize: "1.875rem",
             fontWeight: 800,
-            letterSpacing: "-0.035em",
-            marginBottom: "0.625rem",
+            letterSpacing: "-0.04em",
+            marginBottom: "0.75rem",
           }}
         >
-          Sign in
+          Sign in to continue
         </h1>
         <p
           style={{
-            fontSize: "0.9rem",
+            fontSize: "0.9375rem",
             color: "var(--muted)",
             lineHeight: 1.65,
             marginBottom: "2.25rem",
-            maxWidth: 280,
+            maxWidth: 320,
             margin: "0 auto 2.25rem",
           }}
         >
@@ -83,6 +100,35 @@ export default async function LoginPage({
           Server permission.
         </p>
 
+        {/* Feature pills */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "0.5rem",
+            justifyContent: "center",
+            marginBottom: "2.25rem",
+          }}
+        >
+          {["Weather", "Polls", "Reminders", "Server config"].map((f) => (
+            <span
+              key={f}
+              style={{
+                background: "var(--primary-dim)",
+                border: "1px solid rgba(120,168,106,0.2)",
+                color: "var(--primary)",
+                padding: "0.3rem 0.75rem",
+                borderRadius: "999px",
+                fontSize: "0.78rem",
+                fontWeight: 600,
+              }}
+            >
+              {f}
+            </span>
+          ))}
+        </div>
+
+        {/* Discord sign-in button */}
         <form
           action={async () => {
             "use server";
@@ -91,8 +137,8 @@ export default async function LoginPage({
         >
           <button type="submit" className="btn-login-discord">
             <svg
-              width="22"
-              height="17"
+              width="24"
+              height="18"
               viewBox="0 0 127.14 96.36"
               fill="currentColor"
               aria-hidden="true"
@@ -106,16 +152,8 @@ export default async function LoginPage({
 
       <a
         href="/"
-        style={{
-          marginTop: "1.5rem",
-          fontSize: "0.875rem",
-          color: "var(--muted)",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.35rem",
-          transition: "color 150ms",
-        }}
         className="link-muted"
+        style={{ marginTop: "1.75rem", fontSize: "0.875rem" }}
       >
         ← Back to home
       </a>
