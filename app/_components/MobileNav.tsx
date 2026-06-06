@@ -32,7 +32,7 @@ export function MobileNav({ docsUrl }: MobileNavProps) {
   return (
     <div ref={containerRef}>
       <button
-        className="nav-hamburger"
+        className={`nav-hamburger${open ? " open" : ""}`}
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
