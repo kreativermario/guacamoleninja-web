@@ -484,7 +484,7 @@ function SectionStats({ guildId }: { guildId: string }) {
                   <div className="skel" style={{ height: 10, width: 70 }} />
                   <div className="skel" style={{ height: 8, width: 55 }} />
                 </div>
-                <div style={{ height: 10, borderRadius: 99, background: "rgba(255,255,255,0.05)", overflow: "hidden" }}>
+                <div style={{ height: 6, borderRadius: 99, background: "rgba(255,255,255,0.05)", overflow: "hidden" }}>
                   <div className="skel" style={{ height: "100%", width: `${pct}%`, borderRadius: 99 }} />
                 </div>
               </div>
@@ -542,7 +542,7 @@ function SectionAudit({ guildId }: { guildId: string }) {
               <div
                 key={i}
                 style={{
-                  padding: "0.875rem 1.75rem",
+                  padding: "0.875rem 1.25rem",
                   borderBottom: i < 2 ? "1px solid var(--border)" : undefined,
                   display: "flex",
                   flexDirection: "column",
