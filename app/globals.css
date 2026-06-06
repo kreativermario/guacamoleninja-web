@@ -36,6 +36,81 @@
   --shadow-elevated: 0 4px 24px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
 }
 
+/* ── Animation system ────────────────────────────── */
+:root { --ease-spring: cubic-bezier(0.22, 1, 0.36, 1); }
+
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+/* Skeleton base — always visible (no shimmer when reduced motion) */
+.skel {
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes slide-right {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes pop {
+    0%   { opacity: 0; transform: scale(0.88); }
+    60%  { transform: scale(1.03); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Skeleton shimmer sweep */
+  .skel {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.10) 50%,
+      rgba(255, 255, 255, 0.05) 75%
+    );
+    background-size: 1200px 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* Utility animation classes */
+  .anim-fade-up  { animation: fade-up    400ms var(--ease-spring) both; }
+  .anim-fade-in  { animation: fade-in    350ms var(--ease-spring) both; }
+  .anim-pop      { animation: pop        380ms var(--ease-spring) both; }
+  .anim-delay-1  { animation-delay:  60ms; }
+  .anim-delay-2  { animation-delay: 120ms; }
+  .anim-delay-3  { animation-delay: 180ms; }
+  .anim-delay-4  { animation-delay: 240ms; }
+  .anim-delay-5  { animation-delay: 300ms; }
+
+  /* Section switch entrance (short — triggers on every nav click) */
+  .section-enter { animation: fade-up 200ms var(--ease-spring) both; }
+
+  /* Server switcher dropdown */
+  .sb-server-dropdown { animation: fade-up 200ms var(--ease-spring) both; }
+}
+
+/* Scroll-reveal — invisible until IntersectionObserver fires */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 500ms var(--ease-spring, ease), transform 500ms var(--ease-spring, ease);
+}
+.scroll-reveal.visible { opacity: 1; transform: none; }
+
+/* Always show content when reduced motion is preferred */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal { opacity: 1; transform: none; }
+}
+
 /* ── Reset ───────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
@@ -349,7 +424,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
-  transition: border-color 200ms, transform 200ms, box-shadow 200ms;
+  transition: border-color 250ms var(--ease-spring), transform 250ms var(--ease-spring), box-shadow 250ms;
 }
 .db-server-card:hover {
   border-color: rgba(120,168,106,0.35);
@@ -691,10 +766,14 @@ body {
   padding: 0.6rem 1.25rem; border-radius: 7px;
   border: none;
   font-weight: 700; font-size: 0.875rem;
-  transition: background 200ms, transform 150ms;
+  transition: background 150ms, transform 180ms var(--ease-spring), box-shadow 180ms;
   box-shadow: 0 2px 8px rgba(74,124,89,0.3);
 }
-.btn-save:hover { background: var(--primary-hover); transform: translateY(-1px); }
+.btn-save:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(120,168,106,0.4);
+}
 .btn-save:active { transform: translateY(0); }
 
 .btn-signout {
