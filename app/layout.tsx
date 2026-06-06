@@ -15,6 +15,7 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://app.guacamoleninja.com"),
   title: "guacamoleninja-bot",
   description: "A utility Discord bot — weather, polls, reminders, and more.",
   icons: {
