@@ -41,28 +41,49 @@ const nextConfig: NextConfig = {
           { key: "Surrogate-Control", value: "no-store" },
         ],
       },
-      // Sitemap — fresh 24 h, CDN may serve stale for up to 7 days while revalidating
+      // Homepage — browser 5 min, CDN 1 day + SWR; purged on every deploy
+      {
+        source: "/",
+        headers: [
+          { key: "Cache-Control",     value: "public, max-age=300, stale-while-revalidate=86400" },
+          { key: "CDN-Cache-Control", value: "public, max-age=86400, stale-while-revalidate=86400" },
+          { key: "Cache-Tag",         value: "page-home,deploy" },
+        ],
+      },
+      // Login page — browser 1 h, CDN 1 day; purged on every deploy
+      {
+        source: "/login",
+        headers: [
+          { key: "Cache-Control",     value: "public, max-age=3600, stale-while-revalidate=86400" },
+          { key: "CDN-Cache-Control", value: "public, max-age=86400" },
+          { key: "Cache-Tag",         value: "page-login,deploy" },
+        ],
+      },
+      // Sitemap — browser 1 day, CDN 1 day + 7-day SWR; ISR regenerates daily; purged on deploy
       {
         source: "/sitemap.xml",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800" },
+          { key: "Cache-Control",     value: "public, max-age=86400, stale-while-revalidate=604800" },
           { key: "CDN-Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+          { key: "Cache-Tag",         value: "sitemap,deploy" },
         ],
       },
-      // robots.txt — changes only on deploy, 7-day cache
+      // robots.txt — changes only on deploy; 7-day browser + CDN cache
       {
         source: "/robots.txt",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=604800, s-maxage=604800" },
+          { key: "Cache-Control",     value: "public, max-age=604800" },
           { key: "CDN-Cache-Control", value: "public, max-age=604800" },
+          { key: "Cache-Tag",         value: "robots,deploy" },
         ],
       },
-      // Public static assets (mascot, icons) — 1 year immutable
+      // Public static assets — 1 year immutable (content never changes between deploys)
       {
         source: "/:file((?!_next).+\\.(?:ico|png|jpg|jpeg|svg|webp))",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Cache-Control",     value: "public, max-age=31536000, immutable" },
           { key: "CDN-Cache-Control", value: "public, max-age=31536000, immutable" },
+          { key: "Cache-Tag",         value: "static-assets" },
         ],
       },
     ];

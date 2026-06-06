@@ -225,3 +225,55 @@ jobs:
               "fromAppTemplate": false,
               "stackFileContent": ${{ steps.compose.outputs.content }}
             }
+
+  purge-cache:
+    name: Purge Cloudflare cache
+    runs-on: self-hosted
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+    needs: deploy
+    continue-on-error: true   # missing CF secrets must never block a deploy
+    timeout-minutes: 5
+
+    steps:
+      - name: Load Cloudflare credentials from Vault
+        id: vault
+        continue-on-error: true
+        uses: hashicorp/vault-action@v4.0.0
+        with:
+          url: ${{ secrets.HCP_VAULT_ADDR }}
+          method: approle
+          roleId:   ${{ secrets.HCP_VAULT_ROLE_ID }}
+          secretId: ${{ secrets.HCP_VAULT_SECRET_ID }}
+          secrets: |
+            ${{ vars.VAULT_PATH }} CF_ZONE_ID   | CF_ZONE_ID ;
+            ${{ vars.VAULT_PATH }} CF_API_TOKEN  | CF_API_TOKEN ;
+            ${{ vars.VAULT_PATH }} AUTH_URL       | AUTH_URL
+
+      # Tag-based purge (Cloudflare Enterprise) — purges everything tagged "deploy"
+      - name: Purge by Cache-Tag
+        if: steps.vault.outputs.CF_ZONE_ID != '' && steps.vault.outputs.CF_API_TOKEN != ''
+        continue-on-error: true
+        env:
+          ZONE_ID:  ${{ steps.vault.outputs.CF_ZONE_ID }}
+          CF_TOKEN: ${{ steps.vault.outputs.CF_API_TOKEN }}
+        run: |
+          curl -sf -X POST \
+            "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/purge_cache" \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data '{"tags":["deploy"]}' | jq -e '.success'
+
+      # URL-based purge — works on all Cloudflare plans; covers every deploy-sensitive path
+      - name: Purge by URL
+        if: steps.vault.outputs.CF_ZONE_ID != '' && steps.vault.outputs.CF_API_TOKEN != ''
+        env:
+          ZONE_ID:  ${{ steps.vault.outputs.CF_ZONE_ID }}
+          CF_TOKEN: ${{ steps.vault.outputs.CF_API_TOKEN }}
+          BASE_URL: ${{ steps.vault.outputs.AUTH_URL }}
+        run: |
+          curl -sf -X POST \
+            "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/purge_cache" \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "{\"files\":[\"$BASE_URL\",\"$BASE_URL/login\",\"$BASE_URL/sitemap.xml\",\"$BASE_URL/robots.txt\"]}" \
+            | jq -e '.success'
