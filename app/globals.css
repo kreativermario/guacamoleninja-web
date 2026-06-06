@@ -104,6 +104,25 @@ body {
 }
 .btn-nav-login:hover { background: var(--discord-hover); }
 
+/* Auth bar — always visible (logged-in pages: no hamburger, no MobileNav) */
+.nav-auth-bar {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.nav-auth-name {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .nav-auth-name { display: none; }
+}
+
 /* Mobile hamburger — hidden on desktop */
 .nav-hamburger {
   display: none;

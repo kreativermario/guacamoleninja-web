@@ -5,7 +5,6 @@ import { signOut } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { MobileNav } from "@/app/_components/MobileNav";
 
 export const dynamic = "force-dynamic";
 
@@ -59,20 +58,18 @@ export default async function DashboardPage() {
           <Link className="nav-link" href="/dashboard">Dashboard</Link>
         </div>
 
-        <div className="nav-right-links" style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <div className="nav-auth-bar">
           {session.user.image && (
             <Image src={session.user.image} alt={session.user.name ?? ""} width={34} height={34}
               style={{ borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.12)", flexShrink: 0 }} />
           )}
-          <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {session.user.name}
+          <span className="nav-auth-name">
+            {session.user.name ?? ""}
           </span>
           <form action={async () => { "use server"; await signOut({ redirectTo: "/" }); }}>
             <button type="submit" className="btn-signout">Sign out</button>
           </form>
         </div>
-
-        <MobileNav docsUrl={DOCS_URL} />
       </nav>
 
       <main style={{ flex: 1, padding: "4rem 2rem" }}>
