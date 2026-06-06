@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MobileNav } from "./_components/MobileNav";
+import { ScrollReveal } from "./_components/ScrollReveal";
 
 // Force SSR so DISCORD_CLIENT_ID is read from the runtime environment,
 // not baked in as empty string during the Docker build.
@@ -193,6 +194,7 @@ export default function Home() {
 
         {/* Weather */}
         <div style={{ padding: "6rem 2rem" }}>
+          <ScrollReveal>
           <div
             className="feat-card-grid"
             style={{
@@ -252,10 +254,12 @@ export default function Home() {
               </p>
             </div>
           </div>
+          </ScrollReveal>
         </div>
 
         {/* Dashboard */}
         <div style={{ padding: "6rem 2rem" }}>
+          <ScrollReveal>
           <div
             className="feat-card-grid"
             style={{
@@ -319,10 +323,12 @@ export default function Home() {
               <FeatureDashboardMock />
             </div>
           </div>
+          </ScrollReveal>
         </div>
 
         {/* Welcome messages */}
         <div style={{ padding: "6rem 2rem" }}>
+          <ScrollReveal>
           <div
             className="feat-card-grid"
             style={{
@@ -385,10 +391,12 @@ export default function Home() {
               </p>
             </div>
           </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ── CTA Banner ────────────────────────────── */}
+      <ScrollReveal>
       <section
         style={{
           background: "linear-gradient(135deg, #2d5038 0%, #4a7c59 50%, #3a6647 100%)",
@@ -420,8 +428,10 @@ export default function Home() {
           Add to Discord
         </a>
       </section>
+      </ScrollReveal>
 
       {/* ── Footer ────────────────────────────────── */}
+      <ScrollReveal>
       <footer
         style={{
           background: "#191c2e",
@@ -522,6 +532,7 @@ export default function Home() {
           <span>Open source · MIT License</span>
         </div>
       </footer>
+      </ScrollReveal>
     </div>
   );
 }
