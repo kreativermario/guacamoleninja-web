@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -183,13 +183,15 @@ export function GuildLayout({
   const disabledCommands = config?.disabledCommands ?? [];
 
   function renderSection() {
+    let content: React.ReactNode;
     switch (section) {
-      case "general":  return <SectionGeneral guildId={guildId} config={config} />;
-      case "commands": return <SectionCommands guildId={guildId} disabledCommands={disabledCommands} />;
-      case "welcome":  return <SectionWelcome guildId={guildId} welcome={welcome} channels={channels} />;
-      case "stats":    return <SectionStats guildId={guildId} />;
-      case "audit":    return <SectionAudit guildId={guildId} />;
+      case "general":  content = <SectionGeneral guildId={guildId} config={config} />; break;
+      case "commands": content = <SectionCommands guildId={guildId} disabledCommands={disabledCommands} />; break;
+      case "welcome":  content = <SectionWelcome guildId={guildId} welcome={welcome} channels={channels} />; break;
+      case "stats":    content = <SectionStats guildId={guildId} />; break;
+      case "audit":    content = <SectionAudit guildId={guildId} />; break;
     }
+    return <div key={section} className="section-enter">{content}</div>;
   }
 
   return (
@@ -245,7 +247,7 @@ export function GuildLayout({
       <div className="guild-layout">
         {/* Sidebar */}
         <aside className={`guild-sidebar${open ? " open" : ""}`}>
-          <div ref={switcherRef}>
+          <div ref={switcherRef} className="anim-fade-up anim-delay-1">
             <div
               className="sb-server-hdr sb-server-hdr-btn"
               onClick={() => setSwitcherOpen((v) => !v)}
@@ -304,7 +306,7 @@ export function GuildLayout({
             )}
           </div>
 
-          <nav className="sb-nav">
+          <nav className="sb-nav anim-fade-up anim-delay-2">
             <SbGroup label="Configuration">
               <SbItem section="general" active={section === "general"} onClick={openSection} label="General Settings" icon={ICON_GENERAL} />
               <SbItem section="commands" active={section === "commands"} onClick={openSection} label="Commands" icon={ICON_COMMANDS} />
@@ -317,7 +319,7 @@ export function GuildLayout({
             </SbGroup>
           </nav>
 
-          <Link href="/dashboard" className="sb-back">
+          <Link href="/dashboard" className="sb-back anim-fade-up anim-delay-3">
             {ICON_BACK}
             All servers
           </Link>
