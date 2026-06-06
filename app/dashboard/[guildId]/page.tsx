@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { getUserGuilds, guildIconUrl } from "@/lib/discord";
-import { getBotGuild, getBotGuildChannels } from "@/lib/bot-api";
+import { getBotGuild, getBotGuildChannels, getBotGuildIds } from "@/lib/bot-api";
 import { redirect, notFound } from "next/navigation";
 import { GuildLayout } from "./_components/GuildLayout";
 
@@ -15,11 +15,17 @@ export default async function GuildPage({
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const [guilds, botGuild, channels] = await Promise.all([
+  const [guilds, botGuild, channels, botGuildIdsResult] = await Promise.all([
     getUserGuilds(session.user.id),
     getBotGuild(guildId),
     getBotGuildChannels(guildId),
+    getBotGuildIds(),
   ]);
+
+  const botGuildIds = botGuildIdsResult.ok ? botGuildIdsResult.ids : new Set<string>();
+  const switcherGuilds = guilds
+    .filter((g) => botGuildIds.has(g.id))
+    .map((g) => ({ id: g.id, name: g.name, iconUrl: guildIconUrl(g.id, g.icon) }));
 
   if (!guilds.some((g) => g.id === guildId)) notFound();
   if (!botGuild) notFound();
@@ -43,6 +49,7 @@ export default async function GuildPage({
         channelId: welcome.channelId ?? null,
         message: welcome.message ?? "",
       } : null}
+      guilds={switcherGuilds}
       channels={channels.map((ch) => ({ id: ch.id, name: ch.name }))}
       userName={session.user.name ?? ""}
       userImage={session.user.image ?? null}

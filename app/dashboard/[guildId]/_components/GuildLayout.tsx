@@ -37,6 +37,7 @@ export interface GuildLayoutProps {
   guildId: string;
   guildName: string;
   guildIconUrl: string | null;
+  guilds: { id: string; name: string; iconUrl: string | null }[];
   config: GuildConfig | null;
   welcome: WelcomeConfig | null;
   channels: Channel[];
@@ -143,12 +144,14 @@ function SbGroup({ label, children }: { label: string; children: React.ReactNode
 /* ── Main component ──────────────────────────────── */
 export function GuildLayout({
   guildId, guildName, guildIconUrl: iconUrl,
-  config, welcome, channels,
+  guilds, config, welcome, channels,
   userName, userImage,
 }: GuildLayoutProps) {
   const [section, setSection] = useState<Section>("general");
   const [open, setOpen] = useState(false);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const switcherRef = useRef<HTMLDivElement>(null);
 
   function openSection(s: Section) {
     setSection(s);
@@ -165,6 +168,17 @@ export function GuildLayout({
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
+
+  useEffect(() => {
+    if (!switcherOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (switcherRef.current && !switcherRef.current.contains(e.target as Node)) {
+        setSwitcherOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [switcherOpen]);
 
   const disabledCommands = config?.disabledCommands ?? [];
 
@@ -231,15 +245,63 @@ export function GuildLayout({
       <div className="guild-layout">
         {/* Sidebar */}
         <aside className={`guild-sidebar${open ? " open" : ""}`}>
-          <div className="sb-server-hdr">
-            {iconUrl ? (
-              <div className="sb-server-icon" style={{ padding: 0 }}>
-                <Image src={iconUrl} alt="" width={38} height={38} style={{ borderRadius: "50%", objectFit: "cover" }} />
+          <div ref={switcherRef}>
+            <div
+              className="sb-server-hdr sb-server-hdr-btn"
+              onClick={() => setSwitcherOpen((v) => !v)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === "Enter" && setSwitcherOpen((v) => !v)}
+              aria-expanded={switcherOpen}
+              aria-label="Switch server"
+            >
+              {iconUrl ? (
+                <div className="sb-server-icon" style={{ padding: 0 }}>
+                  <Image src={iconUrl} alt="" width={38} height={38} style={{ borderRadius: "50%", objectFit: "cover" }} />
+                </div>
+              ) : (
+                <div className="sb-server-icon">{guildName[0].toUpperCase()}</div>
+              )}
+              <span className="sb-server-name">{guildName}</span>
+              <svg
+                className={`sb-switcher-chevron${switcherOpen ? " open" : ""}`}
+                width="14" height="14" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2.5"
+                strokeLinecap="round" strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+
+            {switcherOpen && (
+              <div className="sb-server-dropdown">
+                {guilds.map((g) => (
+                  <Link
+                    key={g.id}
+                    href={`/dashboard/${g.id}`}
+                    className={`sb-server-option${g.id === guildId ? " active" : ""}`}
+                    onClick={() => setSwitcherOpen(false)}
+                  >
+                    <div className="sb-server-opt-icon">
+                      {g.iconUrl ? (
+                        <Image src={g.iconUrl} alt="" width={28} height={28} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+                      ) : (
+                        g.name[0].toUpperCase()
+                      )}
+                    </div>
+                    <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {g.name}
+                    </span>
+                    {g.id === guildId && (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </Link>
+                ))}
               </div>
-            ) : (
-              <div className="sb-server-icon">{guildName[0].toUpperCase()}</div>
             )}
-            <span className="sb-server-name">{guildName}</span>
           </div>
 
           <nav className="sb-nav">
