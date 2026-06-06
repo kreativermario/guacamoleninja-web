@@ -34,15 +34,10 @@
   --destructive:     #ed4245;
   --shadow-card:     0 1px 3px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
   --shadow-elevated: 0 4px 24px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
+  --ease-spring:     cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ── Animation system ────────────────────────────── */
-:root { --ease-spring: cubic-bezier(0.22, 1, 0.36, 1); }
-
-@keyframes shimmer {
-  0%   { background-position: -600px 0; }
-  100% { background-position:  600px 0; }
-}
 
 /* Skeleton base — always visible (no shimmer when reduced motion) */
 .skel {
@@ -59,14 +54,14 @@
     from { opacity: 0; }
     to   { opacity: 1; }
   }
-  @keyframes slide-right {
-    from { opacity: 0; transform: translateX(-10px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
   @keyframes pop {
     0%   { opacity: 0; transform: scale(0.88); }
     60%  { transform: scale(1.03); }
     100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position:  600px 0; }
   }
 
   /* Skeleton shimmer sweep */
