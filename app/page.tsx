@@ -2,6 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { MobileNav } from "./_components/MobileNav";
 
+// Force SSR so DISCORD_CLIENT_ID is read from the runtime environment,
+// not baked in as empty string during the Docker build.
+export const dynamic = "force-dynamic";
+
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? "";
 const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&permissions=66448710&scope=bot+applications.commands`;
 const DOCS_URL = "https://docs.guacamoleninja.com";
