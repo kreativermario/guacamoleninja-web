@@ -48,6 +48,8 @@ export default function Home() {
           zIndex: 100,
         }}
       >
+        <MobileNav docsUrl={DOCS_URL} />
+
         <Link
           href="/"
           style={{ display: "flex", alignItems: "center", gap: "0.75rem", color: "var(--text)" }}
@@ -81,8 +83,6 @@ export default function Home() {
             Login with Discord
           </Link>
         </div>
-
-        <MobileNav docsUrl={DOCS_URL} />
       </nav>
 
       {/* ── Hero ──────────────────────────────────── */}
