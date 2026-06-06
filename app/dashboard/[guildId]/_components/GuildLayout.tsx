@@ -537,8 +537,25 @@ function SectionAudit({ guildId }: { guildId: string }) {
       </div>
       <div className="guild-form-card">
         {auditLog === null ? (
-          <div style={{ padding: "2rem 1.75rem", textAlign: "center", color: "var(--muted)", fontSize: "0.9375rem" }}>
-            Loading…
+          <div>
+            {[{ w: 110, a: 155 }, { w: 90, a: 130 }, { w: 120, a: 100 }].map(({ w, a }, i) => (
+              <div
+                key={i}
+                style={{
+                  padding: "0.875rem 1.75rem",
+                  borderBottom: i < 2 ? "1px solid var(--border)" : undefined,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.4rem",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div className="skel" style={{ height: 11, width: w }} />
+                  <div className="skel" style={{ height: 9, width: 72 }} />
+                </div>
+                <div className="skel" style={{ height: 9, width: a }} />
+              </div>
+            ))}
           </div>
         ) : auditLog.length === 0 ? (
           <div style={{ padding: "2rem 1.75rem", textAlign: "center", color: "var(--muted)", fontSize: "0.9375rem" }}>
