@@ -101,13 +101,13 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="db-server-grid">
-            {guilds.map((guild) => {
+            {guilds.map((guild, i) => {
               const hasBot = botGuildIds.has(guild.id);
               const icon = guildIconUrl(guild.id, guild.icon);
               const grad = BANNER_GRADIENTS[guild.id.charCodeAt(0) % BANNER_GRADIENTS.length];
 
               return (
-                <div key={guild.id} className="db-server-card">
+                <div key={guild.id} className={`db-server-card anim-fade-up anim-delay-${Math.min(i, 4) + 1}`}>
                   <div className="db-card-banner">
                     <div className="db-card-banner-fill" style={{ background: grad }} />
                     {!icon && (
