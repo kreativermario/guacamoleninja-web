@@ -477,8 +477,19 @@ function SectionStats({ guildId }: { guildId: string }) {
       </div>
       <div className="guild-form-card">
         {stats === "loading" ? (
-          <div style={{ padding: "2rem 1.75rem", textAlign: "center", color: "var(--muted)", fontSize: "0.9375rem" }}>
-            Loading…
+          <div style={{ padding: "1.5rem 1.75rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {[78, 54, 33, 18].map((pct, i) => (
+              <div key={i} style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <div className="skel" style={{ height: 10, width: 70 }} />
+                  <div className="skel" style={{ height: 8, width: 55 }} />
+                </div>
+                <div style={{ height: 10, borderRadius: 99, background: "rgba(255,255,255,0.05)", overflow: "hidden" }}>
+                  <div className="skel" style={{ height: "100%", width: `${pct}%`, borderRadius: 99 }} />
+                </div>
+              </div>
+            ))}
+            <div className="skel" style={{ height: 8, width: 130, marginTop: "0.25rem" }} />
           </div>
         ) : !stats || stats.total === 0 ? (
           <div style={{ padding: "2rem 1.75rem", textAlign: "center", color: "var(--muted)", fontSize: "0.9375rem" }}>
