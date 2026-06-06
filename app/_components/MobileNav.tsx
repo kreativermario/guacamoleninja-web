@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
 function DiscordIcon() {
@@ -17,9 +17,20 @@ interface MobileNavProps {
 
 export function MobileNav({ docsUrl }: MobileNavProps) {
   const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [open]);
 
   return (
-    <>
+    <div ref={containerRef}>
       <button
         className="nav-hamburger"
         aria-label={open ? "Close menu" : "Open menu"}
@@ -31,28 +42,31 @@ export function MobileNav({ docsUrl }: MobileNavProps) {
         <span />
       </button>
 
+      {/* Always in DOM — CSS transition handles show/hide */}
+      <div className={`nav-drawer${open ? " open" : ""}`} aria-hidden={!open}>
+        <div className="nav-drawer-inner">
+          <a
+            className="nav-link"
+            href={docsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
+          >
+            Docs
+          </a>
+          <Link className="nav-link" href="/dashboard" onClick={() => setOpen(false)}>
+            Dashboard
+          </Link>
+          <Link className="btn-nav-login" href="/login" onClick={() => setOpen(false)}>
+            <DiscordIcon />
+            Login with Discord
+          </Link>
+        </div>
+      </div>
+
       {open && (
-        <>
-          <div className="nav-drawer-overlay" onClick={() => setOpen(false)} />
-          <div className="nav-drawer">
-            <a
-              className="nav-link"
-              href={docsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Docs
-            </a>
-            <Link className="nav-link" href="/dashboard">
-              Dashboard
-            </Link>
-            <Link className="btn-nav-login" href="/login">
-              <DiscordIcon />
-              Login with Discord
-            </Link>
-          </div>
-        </>
+        <div className="nav-drawer-overlay" onClick={() => setOpen(false)} />
       )}
-    </>
+    </div>
   );
 }
