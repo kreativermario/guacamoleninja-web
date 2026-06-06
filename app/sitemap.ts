@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 
+export const revalidate = 86400; // regenerate once per day
+
 const BASE_URL = "https://app.guacamoleninja.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
