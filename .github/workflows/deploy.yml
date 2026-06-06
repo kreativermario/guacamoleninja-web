@@ -72,6 +72,7 @@ jobs:
         uses: docker/build-push-action@v7.2.0
         with:
           context: .
+          file: docker/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.image }}
           cache-from: type=gha
@@ -81,6 +82,7 @@ jobs:
         uses: docker/build-push-action@v7.2.0
         with:
           context: .
+          file: docker/Dockerfile
           push: true
           target: migrator
           tags: ${{ steps.meta.outputs.migrator_image }}
@@ -134,7 +136,7 @@ jobs:
       - name: Read compose file
         id: compose
         run: |
-          CONTENT=$(jq -Rs '.' < docker-compose.prod.yml)
+          CONTENT=$(jq -Rs '.' < docker/docker-compose.prod.yml)
           echo "content=$CONTENT" >> "$GITHUB_OUTPUT"
 
       - name: Check if stack exists

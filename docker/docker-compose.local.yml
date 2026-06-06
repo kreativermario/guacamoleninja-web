@@ -15,7 +15,7 @@ services:
 
   migrate:
     build:
-      context: .
+      context: ..
       target: migrator
     env_file: .env.local
     depends_on:
@@ -24,7 +24,7 @@ services:
 
   web:
     build:
-      context: .
+      context: ..
     env_file: .env.local
     ports:
       - "3000:3000"
