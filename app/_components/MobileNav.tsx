@@ -43,9 +43,6 @@ export function MobileNav({ docsUrl }: MobileNavProps) {
             >
               Docs
             </a>
-            <a className="nav-link" href="#features">
-              Commands
-            </a>
             <Link className="nav-link" href="/dashboard">
               Dashboard
             </Link>

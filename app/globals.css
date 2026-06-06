@@ -39,7 +39,8 @@
 /* ── Reset ───────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-a, a:hover, a:visited, a:active, a:focus { text-decoration: none; color: inherit; }
+a { text-decoration: none; color: inherit; }
+a:hover, a:visited, a:active, a:focus { text-decoration: none; }
 button { cursor: pointer; }
 input, button, textarea, select { font-family: inherit; }
 
@@ -61,7 +62,7 @@ body {
 
 /* ── LANDING PAGE — Nav ─────────────────────────── */
 .nav-logo-name {
-  font-size: 1.375rem;
+  font-size: 1.6rem;
   font-weight: 900;
   letter-spacing: -0.03em;
 }
@@ -258,6 +259,27 @@ body {
   border: none;
 }
 .btn-cta-white:hover { opacity: 0.92; }
+
+/* ── LOGIN page button ───────────────────────────── */
+.btn-login-discord {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  background: #5865f2;
+  color: #fff;
+  padding: 0.875rem 1.25rem;
+  border-radius: 9px;
+  border: none;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: background 150ms, transform 150ms;
+  box-shadow: 0 2px 16px rgba(88,101,242,0.35);
+  cursor: pointer;
+}
+.btn-login-discord:hover { background: #4752c4; transform: translateY(-1px); }
+.btn-login-discord:active { transform: translateY(0); }
 
 /* ── DASHBOARD + LOGIN — kept unchanged ─────────── */
 .btn-primary {
@@ -457,6 +479,7 @@ body {
 
   .footer-top-grid  { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
   .footer-cols-grid { grid-template-columns: 1fr 1fr !important; gap: 2rem !important; }
+  .footer-top-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
 }
 
 @media (max-width: 480px) {

@@ -66,9 +66,6 @@ export default function Home() {
           <a className="nav-link" href={DOCS_URL} target="_blank" rel="noopener noreferrer">
             Docs
           </a>
-          <a className="nav-link" href="#features">
-            Commands
-          </a>
           <Link className="nav-link" href="/dashboard">
             Dashboard
           </Link>
@@ -498,34 +495,17 @@ export default function Home() {
             className="footer-cols-grid"
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(2, 1fr)",
               gap: "2.5rem",
             }}
           >
-            <FooterCol
-              title="Bot"
-              links={[
-                { label: "Commands", href: "#features" },
-                { label: "Welcome Messages", href: "#features" },
-                { label: "Dashboard", href: "/dashboard" },
-                { label: "Add to Discord", href: INVITE_URL, external: true },
-              ]}
-            />
             <FooterCol
               title="Resources"
               links={[
                 { label: "Documentation", href: DOCS_URL, external: true },
                 { label: "GitHub", href: GITHUB_URL, external: true },
-                {
-                  label: "Self-hosting",
-                  href: `${DOCS_URL}/contributing`,
-                  external: true,
-                },
-                {
-                  label: "Contributing",
-                  href: `${DOCS_URL}/contributing`,
-                  external: true,
-                },
+                { label: "Self-hosting", href: `${DOCS_URL}/contributing`, external: true },
+                { label: "Contributing", href: `${DOCS_URL}/contributing`, external: true },
               ]}
             />
             <FooterCol
@@ -534,6 +514,7 @@ export default function Home() {
                 { label: "Changelog", href: GITHUB_URL, external: true },
                 { label: "Bot API", href: `${DOCS_URL}/bot-api`, external: true },
                 { label: "Support", href: GITHUB_URL, external: true },
+                { label: "Add to Discord", href: INVITE_URL, external: true },
               ]}
             />
           </div>
@@ -739,37 +720,137 @@ function Embed({ children }: { children: React.ReactNode }) {
   );
 }
 
+function DiscordEmbed({
+  title,
+  description,
+  fields,
+  footer,
+}: {
+  title: string;
+  description?: string;
+  fields?: { name: string; value: string; icon: string }[];
+  footer?: string;
+}) {
+  return (
+    <div
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        borderLeft: "4px solid #4f545c",
+        borderRadius: "0 6px 6px 0",
+        padding: "0.75rem 1rem",
+        marginTop: "0.25rem",
+        maxWidth: "100%",
+      }}
+    >
+      <div style={{ fontWeight: 700, fontSize: "0.875rem", color: "#f2f3f5", marginBottom: description ? "0.25rem" : "0.625rem" }}>
+        {title}
+      </div>
+      {description && (
+        <div style={{ fontSize: "0.8rem", color: "#b9bbbe", marginBottom: "0.625rem" }}>
+          {description}
+        </div>
+      )}
+      {fields && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem", marginBottom: "0.625rem" }}>
+          {fields.map((f) => (
+            <div key={f.name}>
+              <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#b9bbbe", marginBottom: "0.15rem" }}>
+                {f.icon} {f.name}
+              </div>
+              <div style={{ fontSize: "0.8rem", color: "#dcddde" }}>{f.value}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      {footer && (
+        <div style={{ fontSize: "0.68rem", color: "#72767d", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "0.5rem", marginTop: "0.25rem" }}>
+          {footer}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DiscordCmdUsage({ user, command }: { user: string; command: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.25rem", opacity: 0.6 }}>
+      <div style={{ width: 16, height: 16, borderRadius: "50%", background: "rgba(88,101,242,0.4)", flexShrink: 0, fontSize: "0.5rem", display: "flex", alignItems: "center", justifyContent: "center", color: "#818cf8" }}>
+        {user[0].toUpperCase()}
+      </div>
+      <span style={{ fontSize: "0.72rem", color: "#8e9297" }}>
+        <strong style={{ color: "#b9bbbe" }}>{user}</strong> used{" "}
+        <span style={{ background: "rgba(88,101,242,0.2)", color: "#818cf8", padding: "0 0.3rem", borderRadius: 3, fontWeight: 600 }}>
+          /{command}
+        </span>
+      </span>
+    </div>
+  );
+}
+
 function FeatureWeatherMock() {
   return (
     <MockPanel title="#general">
-      <ChatMsg avatar="A" name="alex">
-        <div style={{ fontSize: "0.875rem", color: "#dcddde" }}>
-          <span style={{ color: "var(--primary)", fontWeight: 600 }}>/weather</span> Lisbon
+      <DiscordCmdUsage user="casey" command="weather" />
+      <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start", marginBottom: "1rem" }}>
+        <div style={{
+          width: 38, height: 38, borderRadius: "50%", flexShrink: 0,
+          background: "rgba(120,168,106,0.25)",
+          border: "1.5px solid rgba(120,168,106,0.4)",
+          overflow: "hidden",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "0.8rem", fontWeight: 800, color: "var(--primary)",
+        }}>
+          GN
         </div>
-      </ChatMsg>
-      <ChatMsg avatar="GN" name="guacamoleninja" isBot>
-        <Embed>
-          🌤 <strong style={{ color: "#f2f3f5" }}>Lisbon, PT</strong>
-          <br />
-          22°C, partly cloudy
-          <br />
-          <span style={{ color: "#72767d" }}>Wind 14 km/h · Humidity 58%</span>
-        </Embed>
-      </ChatMsg>
-      <ChatMsg avatar="S" name="sam">
-        <div style={{ fontSize: "0.875rem", color: "#dcddde" }}>
-          <span style={{ color: "var(--primary)", fontWeight: 600 }}>/weather</span> Tokyo
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.2rem", flexWrap: "wrap" }}>
+            <span style={{ fontSize: "0.875rem", fontWeight: 700, color: "#f2f3f5" }}>Guacamole Ninja</span>
+            <span style={{ fontSize: "0.6rem", fontWeight: 700, background: "#5865f2", color: "#fff", padding: "1px 5px", borderRadius: 3 }}>APP</span>
+            <span style={{ fontSize: "0.7rem", color: "#72767d" }}>Today at 14:32</span>
+          </div>
+          <DiscordEmbed
+            title="🌤 Lisbon, Lisbon District, Portugal"
+            description="Partly cloudy"
+            fields={[
+              { icon: "🌡", name: "Temperature", value: "22°C (feels like 21°C)" },
+              { icon: "💧", name: "Humidity", value: "58%" },
+              { icon: "🌬", name: "Wind", value: "14 km/h NW" },
+            ]}
+            footer="Open-Meteo • Today at 14:32"
+          />
         </div>
-      </ChatMsg>
-      <ChatMsg avatar="GN" name="guacamoleninja" isBot>
-        <Embed>
-          ⛅ <strong style={{ color: "#f2f3f5" }}>Tokyo, JP</strong>
-          <br />
-          18°C, overcast
-          <br />
-          <span style={{ color: "#72767d" }}>Wind 8 km/h · Humidity 72%</span>
-        </Embed>
-      </ChatMsg>
+      </div>
+
+      <DiscordCmdUsage user="riley" command="weather" />
+      <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
+        <div style={{
+          width: 38, height: 38, borderRadius: "50%", flexShrink: 0,
+          background: "rgba(120,168,106,0.25)",
+          border: "1.5px solid rgba(120,168,106,0.4)",
+          overflow: "hidden",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "0.8rem", fontWeight: 800, color: "var(--primary)",
+        }}>
+          GN
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.2rem", flexWrap: "wrap" }}>
+            <span style={{ fontSize: "0.875rem", fontWeight: 700, color: "#f2f3f5" }}>Guacamole Ninja</span>
+            <span style={{ fontSize: "0.6rem", fontWeight: 700, background: "#5865f2", color: "#fff", padding: "1px 5px", borderRadius: 3 }}>APP</span>
+            <span style={{ fontSize: "0.7rem", color: "#72767d" }}>Today at 14:33</span>
+          </div>
+          <DiscordEmbed
+            title="⛅ Tokyo, Tokyo Metropolis, Japan"
+            description="Overcast"
+            fields={[
+              { icon: "🌡", name: "Temperature", value: "18°C (feels like 17°C)" },
+              { icon: "💧", name: "Humidity", value: "72%" },
+              { icon: "🌬", name: "Wind", value: "8 km/h E" },
+            ]}
+            footer="Open-Meteo • Today at 14:33"
+          />
+        </div>
+      </div>
     </MockPanel>
   );
 }
