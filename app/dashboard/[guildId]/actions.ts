@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { getUserGuilds } from "@/lib/discord";
-import { patchBotGuildConfig, patchBotWelcomeConfig } from "@/lib/bot-api";
+import { patchBotGuildConfig, patchBotWelcomeConfig, getBotGuildStats, getBotAuditLog } from "@/lib/bot-api";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -31,6 +31,29 @@ async function getActor(): Promise<{ actorId: string; actorName: string } | unde
   const discordId = (session?.user as { id?: string; discordId?: string } | undefined)?.discordId;
   if (!discordId) return undefined;
   return { actorId: discordId, actorName: session?.user?.name ?? "Unknown" };
+}
+
+export async function fetchGuildStats(guildId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+  await assertAccess(session.user.id, guildId);
+  const stats = await getBotGuildStats(guildId);
+  if (!stats) return null;
+  return { total: stats.total, commands: stats.commands.map((c) => ({ name: c.name, count: c.count })) };
+}
+
+export async function fetchGuildAuditLog(guildId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+  await assertAccess(session.user.id, guildId);
+  const logs = await getBotAuditLog(guildId);
+  return logs.map((e) => ({
+    id: e.id,
+    action: e.action,
+    actorName: e.actorName,
+    createdAt: new Date(e.createdAt as string | Date).toISOString(),
+    changes: e.changes as Record<string, unknown>,
+  }));
 }
 
 export async function updateGuildConfig(formData: FormData) {

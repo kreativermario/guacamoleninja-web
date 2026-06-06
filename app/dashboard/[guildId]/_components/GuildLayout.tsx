@@ -7,6 +7,8 @@ import {
   updateGuildConfig,
   updateCommandsConfig,
   updateWelcomeConfig,
+  fetchGuildStats,
+  fetchGuildAuditLog,
 } from "../actions";
 
 /* ── Types ───────────────────────────────────────── */
@@ -38,8 +40,6 @@ export interface GuildLayoutProps {
   config: GuildConfig | null;
   welcome: WelcomeConfig | null;
   channels: Channel[];
-  stats: Stats | null;
-  auditLog: AuditEntry[];
   userName: string;
   userImage: string | null;
 }
@@ -56,6 +56,45 @@ const COMMANDS = [
   { name: "uptime", label: "/uptime", description: "Check how long the bot has been running",
     icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
 ] as const;
+
+/* ── Hoisted sidebar icons (rendering-hoist-jsx) ─── */
+const ICON_GENERAL = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>
+);
+const ICON_COMMANDS = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
+  </svg>
+);
+const ICON_WELCOME = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+  </svg>
+);
+const ICON_STATS = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="20" x2="18" y2="10"/>
+    <line x1="12" y1="20" x2="12" y2="4"/>
+    <line x1="6" y1="20" x2="6" y2="14"/>
+  </svg>
+);
+const ICON_AUDIT = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="16" y1="13" x2="8" y2="13"/>
+    <line x1="16" y1="17" x2="8" y2="17"/>
+  </svg>
+);
+const ICON_BACK = (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M19 12H5M12 19l-7-7 7-7"/>
+  </svg>
+);
 
 function DiscordIcon() {
   return (
@@ -104,37 +143,40 @@ function SbGroup({ label, children }: { label: string; children: React.ReactNode
 /* ── Main component ──────────────────────────────── */
 export function GuildLayout({
   guildId, guildName, guildIconUrl: iconUrl,
-  config, welcome, channels, stats, auditLog,
+  config, welcome, channels,
   userName, userImage,
 }: GuildLayoutProps) {
   const [section, setSection] = useState<Section>("general");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [hamburgerOpen, setHamburgerOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
 
   function openSection(s: Section) {
     setSection(s);
-    setSidebarOpen(false);
-    setHamburgerOpen(false);
-  }
-
-  function toggleSidebar() {
-    const next = !sidebarOpen;
-    setSidebarOpen(next);
-    setHamburgerOpen(next);
+    setOpen(false);
   }
 
   useEffect(() => {
+    if (!open) return;
     function handleClick(e: MouseEvent) {
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setHamburgerOpen(false);
+        setOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
+  }, [open]);
 
   const disabledCommands = config?.disabledCommands ?? [];
+
+  function renderSection() {
+    switch (section) {
+      case "general":  return <SectionGeneral guildId={guildId} config={config} />;
+      case "commands": return <SectionCommands guildId={guildId} disabledCommands={disabledCommands} />;
+      case "welcome":  return <SectionWelcome guildId={guildId} welcome={welcome} channels={channels} />;
+      case "stats":    return <SectionStats guildId={guildId} />;
+      case "audit":    return <SectionAudit guildId={guildId} />;
+    }
+  }
 
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
@@ -170,10 +212,10 @@ export function GuildLayout({
 
         {/* Hamburger — opens the sidebar on mobile */}
         <button
-          className={`nav-hamburger${hamburgerOpen ? " open" : ""}`}
-          aria-label={hamburgerOpen ? "Close menu" : "Open menu"}
-          aria-expanded={hamburgerOpen}
-          onClick={toggleSidebar}
+          className={`nav-hamburger${open ? " open" : ""}`}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
         >
           <span /><span /><span />
         </button>
@@ -181,14 +223,14 @@ export function GuildLayout({
 
       {/* Sidebar overlay */}
       <div
-        className={`guild-sidebar-overlay${sidebarOpen ? " show" : ""}`}
-        onClick={() => { setSidebarOpen(false); setHamburgerOpen(false); }}
+        className={`guild-sidebar-overlay${open ? " show" : ""}`}
+        onClick={() => setOpen(false)}
         aria-hidden="true"
       />
 
       <div className="guild-layout">
         {/* Sidebar */}
-        <aside className={`guild-sidebar${sidebarOpen ? " open" : ""}`}>
+        <aside className={`guild-sidebar${open ? " open" : ""}`}>
           <div className="sb-server-hdr">
             {iconUrl ? (
               <div className="sb-server-icon" style={{ padding: 0 }}>
@@ -202,40 +244,26 @@ export function GuildLayout({
 
           <nav className="sb-nav">
             <SbGroup label="Configuration">
-              <SbItem section="general" active={section === "general"} onClick={openSection} label="General Settings"
-                icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>}
-              />
-              <SbItem section="commands" active={section === "commands"} onClick={openSection} label="Commands"
-                icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>}
-              />
-              <SbItem section="welcome" active={section === "welcome"} onClick={openSection} label="Welcome Messages"
-                icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>}
-              />
+              <SbItem section="general" active={section === "general"} onClick={openSection} label="General Settings" icon={ICON_GENERAL} />
+              <SbItem section="commands" active={section === "commands"} onClick={openSection} label="Commands" icon={ICON_COMMANDS} />
+              <SbItem section="welcome" active={section === "welcome"} onClick={openSection} label="Welcome Messages" icon={ICON_WELCOME} />
             </SbGroup>
 
             <SbGroup label="Analytics">
-              <SbItem section="stats" active={section === "stats"} onClick={openSection} label="Command Stats"
-                icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>}
-              />
-              <SbItem section="audit" active={section === "audit"} onClick={openSection} label="Audit Log"
-                icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>}
-              />
+              <SbItem section="stats" active={section === "stats"} onClick={openSection} label="Command Stats" icon={ICON_STATS} />
+              <SbItem section="audit" active={section === "audit"} onClick={openSection} label="Audit Log" icon={ICON_AUDIT} />
             </SbGroup>
           </nav>
 
           <Link href="/dashboard" className="sb-back">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            {ICON_BACK}
             All servers
           </Link>
         </aside>
 
         {/* Main content */}
         <main className="guild-main">
-          {section === "general" && <SectionGeneral guildId={guildId} config={config} />}
-          {section === "commands" && <SectionCommands guildId={guildId} disabledCommands={disabledCommands} />}
-          {section === "welcome" && <SectionWelcome guildId={guildId} welcome={welcome} channels={channels} />}
-          {section === "stats" && <SectionStats stats={stats} />}
-          {section === "audit" && <SectionAudit auditLog={auditLog} />}
+          {renderSection()}
         </main>
       </div>
     </div>
@@ -282,6 +310,7 @@ function SectionGeneral({ guildId, config }: { guildId: string; config: GuildCon
 
 /* ── Section: Commands ───────────────────────────── */
 function SectionCommands({ guildId, disabledCommands }: { guildId: string; disabledCommands: string[] }) {
+  const disabled = new Set(disabledCommands);
   return (
     <>
       <div className="guild-section-hdr">
@@ -298,7 +327,7 @@ function SectionCommands({ guildId, disabledCommands }: { guildId: string; disab
                 <div className="guild-cmd-name">{cmd.label}</div>
                 <div className="guild-cmd-desc">{cmd.description}</div>
               </div>
-              <Toggle name="command" defaultChecked={!disabledCommands.includes(cmd.name)} ariaLabel={`Toggle ${cmd.label}`} />
+              <Toggle name="command" defaultChecked={!disabled.has(cmd.name)} ariaLabel={`Toggle ${cmd.label}`} />
             </div>
           ))}
         </div>
@@ -369,7 +398,13 @@ function SectionWelcome({ guildId, welcome, channels }: { guildId: string; welco
 }
 
 /* ── Section: Command Stats ──────────────────────── */
-function SectionStats({ stats }: { stats: Stats | null }) {
+function SectionStats({ guildId }: { guildId: string }) {
+  const [stats, setStats] = useState<Stats | null | "loading">("loading");
+
+  useEffect(() => {
+    fetchGuildStats(guildId).then(setStats).catch(() => setStats(null));
+  }, [guildId]);
+
   return (
     <>
       <div className="guild-section-hdr">
@@ -377,7 +412,11 @@ function SectionStats({ stats }: { stats: Stats | null }) {
         <p className="guild-section-desc">Top commands used in the last 30 days.</p>
       </div>
       <div className="guild-form-card">
-        {!stats || stats.total === 0 ? (
+        {stats === "loading" ? (
+          <div style={{ padding: "2rem 1.75rem", textAlign: "center", color: "var(--muted)", fontSize: "0.9375rem" }}>
+            Loading…
+          </div>
+        ) : !stats || stats.total === 0 ? (
           <div style={{ padding: "2rem 1.75rem", textAlign: "center", color: "var(--muted)", fontSize: "0.9375rem" }}>
             No commands used in the last 30 days.
           </div>
@@ -408,7 +447,13 @@ function SectionStats({ stats }: { stats: Stats | null }) {
 }
 
 /* ── Section: Audit Log ──────────────────────────── */
-function SectionAudit({ auditLog }: { auditLog: AuditEntry[] }) {
+function SectionAudit({ guildId }: { guildId: string }) {
+  const [auditLog, setAuditLog] = useState<AuditEntry[] | null>(null);
+
+  useEffect(() => {
+    fetchGuildAuditLog(guildId).then(setAuditLog).catch(() => setAuditLog([]));
+  }, [guildId]);
+
   return (
     <>
       <div className="guild-section-hdr">
@@ -416,7 +461,11 @@ function SectionAudit({ auditLog }: { auditLog: AuditEntry[] }) {
         <p className="guild-section-desc">Recent configuration changes made via the dashboard.</p>
       </div>
       <div className="guild-form-card">
-        {auditLog.length === 0 ? (
+        {auditLog === null ? (
+          <div style={{ padding: "2rem 1.75rem", textAlign: "center", color: "var(--muted)", fontSize: "0.9375rem" }}>
+            Loading…
+          </div>
+        ) : auditLog.length === 0 ? (
           <div style={{ padding: "2rem 1.75rem", textAlign: "center", color: "var(--muted)", fontSize: "0.9375rem" }}>
             No changes recorded yet.
           </div>

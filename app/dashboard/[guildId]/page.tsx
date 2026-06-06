@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { getUserGuilds, guildIconUrl } from "@/lib/discord";
-import { getBotGuild, getBotGuildChannels, getBotGuildStats, getBotAuditLog } from "@/lib/bot-api";
+import { getBotGuild, getBotGuildChannels } from "@/lib/bot-api";
 import { redirect, notFound } from "next/navigation";
 import { GuildLayout } from "./_components/GuildLayout";
 
@@ -15,12 +15,10 @@ export default async function GuildPage({
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const [guilds, botGuild, channels, stats, auditLog] = await Promise.all([
+  const [guilds, botGuild, channels] = await Promise.all([
     getUserGuilds(session.user.id),
     getBotGuild(guildId),
     getBotGuildChannels(guildId),
-    getBotGuildStats(guildId),
-    getBotAuditLog(guildId),
   ]);
 
   if (!guilds.some((g) => g.id === guildId)) notFound();
@@ -46,17 +44,6 @@ export default async function GuildPage({
         message: welcome.message ?? "",
       } : null}
       channels={channels.map((ch) => ({ id: ch.id, name: ch.name }))}
-      stats={stats ? {
-        total: stats.total,
-        commands: stats.commands.map((c) => ({ name: c.name, count: c.count })),
-      } : null}
-      auditLog={auditLog.map((e) => ({
-        id: e.id,
-        action: e.action,
-        actorName: e.actorName,
-        createdAt: new Date(e.createdAt as string | Date).toISOString(),
-        changes: e.changes as Record<string, unknown>,
-      }))}
       userName={session.user.name ?? ""}
       userImage={session.user.image ?? null}
     />
