@@ -75,7 +75,7 @@ export default async function LoginPage({
               marginBottom: "0.2rem",
             }}
           >
-            guacamoleninja
+            Guacamole Ninja Bot
           </div>
           <div style={{ fontSize: "0.8rem", color: "var(--primary)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>
             Discord Bot

@@ -62,7 +62,7 @@ export default function Home() {
               flexShrink: 0,
             }}
           />
-          <span className="nav-logo-name">guacamoleninja</span>
+          <span className="nav-logo-name">Guacamole Ninja</span>
         </Link>
 
         <div className="nav-center-links">
@@ -524,7 +524,7 @@ export default function Home() {
             color: "var(--muted)",
           }}
         >
-          <span>© 2026 guacamoleninja-bot</span>
+          <span>© 2026 Guacamole Ninja Bot</span>
           <span>Open source · MIT License</span>
         </div>
       </footer>
@@ -957,7 +957,7 @@ function FeatureWelcomeMock() {
             👋
           </div>
           <div>
-            <div style={{ fontSize: "0.8rem", fontWeight: 700 }}>guacamoleninja</div>
+            <div style={{ fontSize: "0.8rem", fontWeight: 700 }}>Guacamole Ninja</div>
             <div style={{ fontSize: "0.67rem", color: "var(--muted)" }}>Today at 14:32</div>
           </div>
         </div>

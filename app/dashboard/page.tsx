@@ -48,7 +48,7 @@ export default async function DashboardPage() {
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.75rem", color: "var(--text)" }}>
           <Image src="/mascot.jpg" alt="guacamoleninja" width={44} height={44}
             style={{ borderRadius: "50%", border: "2px solid rgba(255,255,255,0.12)", flexShrink: 0 }} />
-          <span className="nav-logo-name">guacamoleninja</span>
+          <span className="nav-logo-name">Guacamole Ninja</span>
         </Link>
 
         <div className="nav-center-links">
