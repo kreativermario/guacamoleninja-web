@@ -17,14 +17,16 @@ const openSans = Open_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
-  title: "guacamoleninja-bot",
-  description: "A utility Discord bot — weather, polls, reminders, and more.",
+  title: { default: "Guacamole Ninja Bot", template: "%s | Guacamole Ninja Bot" },
+  description: "Manage your Discord server effortlessly — weather, polls, reminders, and more.",
   openGraph: {
-    title: "guacamoleninja-bot",
-    description: "A utility Discord bot — weather, polls, reminders, and more.",
+    title: "Guacamole Ninja Bot",
+    description: "Manage your Discord server effortlessly — weather, polls, reminders, and more.",
     url: APP_URL,
-    images: [{ url: "/icon.png", width: 512, height: 512 }],
+    siteName: "Guacamole Ninja Bot",
+    type: "website",
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
