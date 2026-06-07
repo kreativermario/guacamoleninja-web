@@ -5,6 +5,7 @@ import { getUserGuilds } from "@/lib/discord";
 import { patchBotGuildConfig, patchBotWelcomeConfig, getBotGuildStats, getBotAuditLog } from "@/lib/bot-api";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const ALL_COMMANDS = ["weather", "server", "config", "uptime"] as const;
 
@@ -59,6 +60,7 @@ export async function fetchGuildAuditLog(guildId: string) {
 export async function updateGuildConfig(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
+  checkRateLimit(session.user.id);
 
   const parsed = SettingsSchema.safeParse({
     guildId: formData.get("guildId"),
@@ -79,6 +81,7 @@ export async function updateGuildConfig(formData: FormData) {
 export async function updateCommandsConfig(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
+  checkRateLimit(session.user.id);
 
   const guildId = formData.get("guildId");
   if (typeof guildId !== "string" || !guildId) throw new Error("Missing guildId");
@@ -97,6 +100,7 @@ export async function updateCommandsConfig(formData: FormData) {
 export async function updateWelcomeConfig(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
+  checkRateLimit(session.user.id);
 
   const parsed = WelcomeSchema.safeParse({
     guildId: formData.get("guildId"),
