@@ -47,3 +47,4 @@ HANDOFF.md
 
 # brainstorming session files
 .superpowers/
+.pnpm-store/
