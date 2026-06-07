@@ -2,10 +2,10 @@ import { ImageResponse } from "next/og";
 import { readFile } from "fs/promises";
 import { join } from "path";
 
-export const size = { width: 32, height: 32 };
+export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-export default async function Icon() {
+export default async function AppleIcon() {
   const buf = await readFile(join(process.cwd(), "public/mascot.jpg"));
   const src = `data:image/jpeg;base64,${buf.toString("base64")}`;
 
@@ -13,19 +13,19 @@ export default async function Icon() {
     (
       <div
         style={{
-          width: 32,
-          height: 32,
+          width: 180,
+          height: 180,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           background: "#1e2030",
-          borderRadius: 7,
+          borderRadius: 40,
         }}
       >
         <img
           src={src}
-          width={28}
-          height={28}
+          width={152}
+          height={152}
           style={{ objectFit: "cover", borderRadius: "50%" }}
         />
       </div>
