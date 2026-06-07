@@ -24,6 +24,7 @@ export default async function Icon() {
       >
         <img
           src={src}
+          alt=""
           width={28}
           height={28}
           style={{ objectFit: "cover", borderRadius: "50%" }}

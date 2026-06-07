@@ -33,7 +33,7 @@ export default async function OgImage() {
             display: "flex",
           }}
         >
-          <img src={src} width={160} height={160} style={{ objectFit: "cover" }} />
+          <img src={src} alt="" width={160} height={160} style={{ objectFit: "cover" }} />
         </div>
         <div
           style={{

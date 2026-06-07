@@ -24,6 +24,7 @@ export default async function AppleIcon() {
       >
         <img
           src={src}
+          alt=""
           width={152}
           height={152}
           style={{ objectFit: "cover", borderRadius: "50%" }}

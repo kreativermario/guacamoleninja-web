@@ -3,6 +3,7 @@ import { signIn } from "@/auth";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Image from "next/image";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Sign In",
@@ -162,13 +163,13 @@ export default async function LoginPage({
         </form>
       </div>
 
-      <a
+      <Link
         href="/"
         className="link-muted"
         style={{ marginTop: "1.75rem", fontSize: "0.875rem" }}
       >
         ← Back to home
-      </a>
+      </Link>
     </div>
   );
 }
