@@ -10,7 +10,7 @@ import { DOCS_URL, GITHUB_URL, BOT_INVITE_BASE } from "@/lib/config";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Guacamole Ninja Bot",
+  title: { absolute: "Guacamole Ninja Bot" },
   description: "A utility Discord bot — weather, polls, reminders, and more. Manage your server from the dashboard.",
 };
 
