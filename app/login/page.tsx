@@ -11,8 +11,14 @@ export default async function LoginPage({
   const session = await auth();
   if (session) redirect("/dashboard");
 
-  const raw = (await searchParams).callbackUrl ?? "/dashboard";
-  const callbackUrl = raw.startsWith("/") && !raw.startsWith("//") ? raw : "/dashboard";
+  const rawCallback = (await searchParams).callbackUrl ?? "/dashboard";
+  let callbackUrl = "/dashboard";
+  try {
+    const parsed = new URL(rawCallback, "http://localhost");
+    if (parsed.pathname.startsWith("/")) callbackUrl = parsed.pathname;
+  } catch {
+    // malformed URL — keep default
+  }
 
   return (
     <div
