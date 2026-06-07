@@ -21,7 +21,7 @@ COPY package.json pnpm-workspace.yaml prisma.config.ts ./
 COPY prisma ./prisma
 CMD ["pnpm", "prisma", "migrate", "deploy"]
 
-FROM gcr.io/distroless/nodejs24-debian12:nonroot AS runner
+FROM gcr.io/distroless/nodejs24-debian13:nonroot AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1

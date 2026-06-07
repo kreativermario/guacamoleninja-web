@@ -43,3 +43,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+HANDOFF.md
+
+# brainstorming session files
+.superpowers/

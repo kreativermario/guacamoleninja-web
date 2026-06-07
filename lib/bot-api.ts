@@ -137,7 +137,7 @@ export async function patchBotGuildConfig(
   if (!res.ok) {
     const msg = await res.text().catch(() => res.status.toString());
     logger.error("bot-api", "patchBotGuildConfig failed", { guildId, status: res.status, err: msg, ms });
-    throw new Error(`Bot API error: ${msg}`);
+    throw new Error("Failed to save configuration. Please try again.");
   }
   logger.info("bot-api", "patchBotGuildConfig ok", { guildId, ms });
   return ((await res.json()) as { config: BotGuildConfig }).config;
@@ -227,7 +227,7 @@ export async function patchBotWelcomeConfig(
   if (!res.ok) {
     const msg = await res.text().catch(() => res.status.toString());
     logger.error("bot-api", "patchBotWelcomeConfig failed", { guildId, status: res.status, err: msg, ms });
-    throw new Error(`Bot API error: ${msg}`);
+    throw new Error("Failed to save configuration. Please try again.");
   }
   logger.info("bot-api", "patchBotWelcomeConfig ok", { guildId, ms });
   return ((await res.json()) as { welcomeConfig: BotWelcomeConfig }).welcomeConfig;
