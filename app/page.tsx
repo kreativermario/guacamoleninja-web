@@ -2,14 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { MobileNav } from "./_components/MobileNav";
 import { ScrollReveal } from "./_components/ScrollReveal";
-import { DOCS_URL, GITHUB_URL } from "@/lib/config";
+import { DOCS_URL, GITHUB_URL, BOT_INVITE_BASE } from "@/lib/config";
 
 // Force SSR so DISCORD_CLIENT_ID is read from the runtime environment,
 // not baked in as empty string during the Docker build.
 export const dynamic = "force-dynamic";
-
-const CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? "";
-const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&permissions=66448710&scope=bot+applications.commands`;
 
 function DiscordIcon({ size = 22 }: { size?: number }) {
   const h = Math.round(size * (96.36 / 127.14));
@@ -145,7 +142,7 @@ export default function Home() {
             >
               <a
                 className="btn-hero-primary"
-                href={INVITE_URL}
+                href={BOT_INVITE_BASE}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -419,7 +416,7 @@ export default function Home() {
         </h2>
         <a
           className="btn-cta-white"
-          href={INVITE_URL}
+          href={BOT_INVITE_BASE}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -510,7 +507,7 @@ export default function Home() {
                 { label: "Changelog", href: GITHUB_URL, external: true },
                 { label: "Bot API", href: `${DOCS_URL}/bot-api`, external: true },
                 { label: "Support", href: GITHUB_URL, external: true },
-                { label: "Add to Discord", href: INVITE_URL, external: true },
+                { label: "Add to Discord", href: BOT_INVITE_BASE, external: true },
               ]}
             />
           </div>
