@@ -467,7 +467,7 @@ export default function Home() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                guacamoleninja
+                Guacamole Ninja
               </span>
             </div>
             <p
