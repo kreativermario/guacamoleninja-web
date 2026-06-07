@@ -864,6 +864,8 @@ body {
   .nav-hamburger     { display: flex; }
   .nav-center-links  { display: none; }
   .nav-right-links   { display: none; }
+  .nav-mobile-pad    { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .nav-logo-name     { font-size: 1.15rem; }
 
   .hero-grid {
     grid-template-columns: 1fr !important;

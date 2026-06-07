@@ -37,6 +37,7 @@ export default function Home() {
       <nav
         role="navigation"
         aria-label="Main navigation"
+        className="nav-mobile-pad"
         style={{
           height: 76,
           background: "rgba(30,32,48,0.95)",
