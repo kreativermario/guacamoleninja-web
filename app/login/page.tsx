@@ -11,7 +11,8 @@ export default async function LoginPage({
   const session = await auth();
   if (session) redirect("/dashboard");
 
-  const { callbackUrl } = await searchParams;
+  const raw = (await searchParams).callbackUrl ?? "/dashboard";
+  const callbackUrl = raw.startsWith("/") && !raw.startsWith("//") ? raw : "/dashboard";
 
   return (
     <div
@@ -132,7 +133,7 @@ export default async function LoginPage({
         <form
           action={async () => {
             "use server";
-            await signIn("discord", { redirectTo: callbackUrl ?? "/dashboard" });
+            await signIn("discord", { redirectTo: callbackUrl });
           }}
         >
           <button type="submit" className="btn-login-discord">
