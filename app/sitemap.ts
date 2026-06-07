@@ -1,19 +1,18 @@
 import type { MetadataRoute } from "next";
+import { APP_URL } from "@/lib/config";
 
-export const revalidate = 86400; // regenerate once per day
-
-const BASE_URL = "https://app.guacamoleninja.com";
+export const revalidate = 86400;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: BASE_URL,
+      url: APP_URL,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 1,
     },
     {
-      url: `${BASE_URL}/login`,
+      url: `${APP_URL}/login`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.3,

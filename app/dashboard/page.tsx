@@ -5,12 +5,10 @@ import { signOut } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { DOCS_URL, BOT_INVITE_BASE } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
-const CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? "";
-const INVITE_BASE = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&permissions=66448710&scope=bot+applications.commands`;
-const DOCS_URL = "https://docs.guacamoleninja.com";
 
 const BANNER_GRADIENTS = [
   "linear-gradient(135deg,#1a3020,#0d1e14)",
@@ -131,7 +129,7 @@ export default async function DashboardPage() {
                         Manage
                       </Link>
                     ) : (
-                      <a href={`${INVITE_BASE}&guild_id=${guild.id}`} target="_blank" rel="noopener noreferrer" className="db-btn-add">
+                      <a href={`${BOT_INVITE_BASE}&guild_id=${guild.id}`} target="_blank" rel="noopener noreferrer" className="db-btn-add">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
                         Add Bot
                       </a>

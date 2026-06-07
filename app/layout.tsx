@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Open_Sans } from "next/font/google";
 import "./globals.css";
+import { APP_URL } from "@/lib/config";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,13 +16,13 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://app.guacamoleninja.com"),
+  metadataBase: new URL(APP_URL),
   title: "guacamoleninja-bot",
   description: "A utility Discord bot — weather, polls, reminders, and more.",
   openGraph: {
     title: "guacamoleninja-bot",
     description: "A utility Discord bot — weather, polls, reminders, and more.",
-    url: "https://app.guacamoleninja.com",
+    url: APP_URL,
     images: [{ url: "/icon.png", width: 512, height: 512 }],
   },
 };
