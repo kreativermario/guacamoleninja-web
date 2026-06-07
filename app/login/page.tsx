@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { signIn } from "@/auth";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Sign In",
+};
 
 export default async function LoginPage({
   searchParams,

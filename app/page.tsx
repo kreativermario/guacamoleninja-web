@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { MobileNav } from "./_components/MobileNav";
@@ -7,6 +8,11 @@ import { DOCS_URL, GITHUB_URL, BOT_INVITE_BASE } from "@/lib/config";
 // Force SSR so DISCORD_CLIENT_ID is read from the runtime environment,
 // not baked in as empty string during the Docker build.
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Guacamole Ninja Bot",
+  description: "A utility Discord bot — weather, polls, reminders, and more. Manage your server from the dashboard.",
+};
 
 function DiscordIcon({ size = 22 }: { size?: number }) {
   const h = Math.round(size * (96.36 / 127.14));
